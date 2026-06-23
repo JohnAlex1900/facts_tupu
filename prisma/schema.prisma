@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+}
+
+/// Cascading Regional Hierarchy: Level 1
+model County {
+  id             String         @id @default(uuid())
+  name           String         @unique
+  code           Int            @unique // Official IEBC/KNBS county codes
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  // Relations
+  constituencies Constituency[]
+  leaders        Leader[]
+  audits         WhistleblowerSubmission[]
+}
+
+/// Cascading Regional Hierarchy: Level 2
+model Constituency {
+  id        String   @id @default(uuid())
+  name      String
+  countyId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  county    County   @relation(fields: [countyId], references: [id], onDelete: Cascade)
+  wards     Ward[]
+  leaders   Leader[]
+
+  @@unique([name, countyId])
+}
+
+/// Cascading Regional Hierarchy: Level 3
+model Ward {
+  id             String       @id @default(uuid())
+  name           String
+  constituencyId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Relations
+  constituency   Constituency @relation(fields: [constituencyId], references: [id], onDelete: Cascade)
+  leaders        Leader[]
+
+  @@unique([name, constituencyId])
+}
+
+enum LeaderType {
+  INCUMBENT
+  ASPIRANT
+}
+
+/// Unified Leadership Profile Entity
+model Leader {
+  id                 String       @id @default(uuid())
+  name               String
+  age                Int
+  type               LeaderType
+  roleTitle          String       // e.g., "Member of Parliament", "MCA", "Youth Tech-Hub Organizer"
+  communityFootprint String       @db.Text
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  // Flexible Geographic Jurisdiction Links
+  countyId           String
+  constituencyId     String?
+  wardId             String?
+
+  county             County        @relation(fields: [countyId], references: [id])
+  constituency       Constituency? @relation(fields: [constituencyId], references: [id])
+  ward               Ward?         @relation(fields: [wardId], references: [id])
+
+  // Telemetry Metrics & Tracking Blocks
+  pillars            PillarScore?
+  projects           Project[]
+  auditLogs          AuditLog[]
+}
+
+/// Five-Pillar Decision Engine Analytics Node
+model PillarScore {
+  id             String   @id @default(uuid())
+  leaderId       String   @unique
+  legislation    Int      @default(0) // 0-100 index mapping floor footprints
+  fiduciary      Int      @default(0) // 0-100 Auditor General compliance score
+  responsiveness Int      @default(0) // 0-100 community feedback metrics
+  fidelity       Int      @default(0) // 0-100 satellite verified delivery
+  integrity      Int      @default(0) // 0-100 anti-corruption clearance score
+  updatedAt      DateTime @updatedAt
+
+  leader         Leader   @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+}
+
+enum ProjectStatus {
+  NOT_STARTED
+  STALLED
+  COMPLETED
+}
+
+/// Infrastructure Telemetry Verification Node
+model Project {
+  id              String        @id @default(uuid())
+  leaderId        String
+  name            String
+  allocatedFunds  Decimal       @db.Decimal(14, 2)
+  disbursedFunds  Decimal       @db.Decimal(14, 2)
+  satelliteStatus ProjectStatus @default(NOT_STARTED)
+  latitude        Float?
+  longitude       Float?
+  lastGroundPass  DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  leader          Leader        @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+}
+
+enum SeverityLevel {
+  GREEN
+  YELLOW
+  RED
+}
+
+/// Aggregated Official Ingestion Logs
+model AuditLog {
+  id        String        @id @default(uuid())
+  leaderId  String
+  date      DateTime
+  source    String        // e.g., "Hansard", "CoB / IFMIS", "Satellite API"
+  finding   String        @db.Text
+  severity  SeverityLevel @default(GREEN)
+  createdAt DateTime      @default(now())
+
+  leader    Leader        @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+}
+
+enum AuditCategory {
+  GRAFT
+  PROCUREMENT
+  LAND
+  IMPUNITY
+}
+
+/// Anika Jaba Secure Dispatched Evidence Assets
+model WhistleblowerSubmission {
+  id           String        @id @default(uuid())
+  trackingKey  String        @unique // Hashed or secure randomized key token (e.g., JABA-PROOF-X)
+  cidRoot      String        @unique // Decoupled content identity hash (IPFS Content Identifier)
+  title        String
+  category     AuditCategory
+  description  String        @db.Text
+  countyId     String
+  createdAt    DateTime      @default(now())
+
+  county       County        @relation(fields: [countyId], references: [id])
+
+  @@index([trackingKey])
+  @@index([countyId])
+}
