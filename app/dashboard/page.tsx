@@ -13,7 +13,7 @@ import {
   Activity,
 } from "lucide-react";
 import Link from "next/link";
-import { getApiBaseUrl } from "@/app/lib/api_client";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
 interface ChallengerMatch {
@@ -167,8 +167,8 @@ export default function AccountabilityWallDashboard() {
 
   useEffect(() => {
     async function loadDashboardRegistry() {
-      const baseUrl = getApiBaseUrl();
-      const requestUrl = `${baseUrl}/api/v1/profiles`;
+      const baseUrl = getApiV1BaseUrl();
+      const requestUrl = `${baseUrl}/profiles`;
 
       try {
         const res = await fetch(requestUrl);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { getApiBaseUrl } from "@/app/lib/api_client";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import {
   ArrowLeft,
   AlertTriangle,
@@ -69,9 +69,9 @@ export default function LeaderDossierPage({
     const fetchLeaderDossier = async () => {
       try {
         setLoading(true);
-        const baseUrl = getApiBaseUrl();
+        const baseUrl = getApiV1BaseUrl();
         const response = await fetch(
-          `${baseUrl}/api/v1/profiles/${resolvedParams.id}`,
+          `${baseUrl}/profiles/${resolvedParams.id}`,
         );
 
         if (!response.ok) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getApiBaseUrl } from "@/app/lib/api_client";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import {
   BarChart3,
   Activity,
@@ -24,7 +24,7 @@ export default function IntelSubmissionPortal() {
     "idle" | "processing_payment" | "uploading" | "success" | "error"
   >("idle");
 
-  const BACKEND_API_BASE_URL = getApiBaseUrl();
+  const BACKEND_API_BASE_URL = getApiV1BaseUrl();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -58,16 +58,13 @@ export default function IntelSubmissionPortal() {
           token = localStorage.getItem("facts_tupu_token");
         } // Retrieve active session token
 
-        const response = await fetch(
-          `${BACKEND_API_BASE_URL}/api/v1/intel/submit`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`, // Inject secure header
-            },
-            body: formData,
+        const response = await fetch(`${BACKEND_API_BASE_URL}/intel/submit`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`, // Inject secure header
           },
-        );
+          body: formData,
+        });
 
         if (response.ok) {
           setStatus("success");

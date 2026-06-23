@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getApiBaseUrl } from "@/app/lib/api_client";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import {
   Search,
   ShieldAlert,
@@ -67,8 +67,8 @@ export default function ChipukiziHubPage() {
     const fetchChallengers = async () => {
       try {
         setLoading(true);
-        const baseUrl = getApiBaseUrl();
-        const res = await fetch(`${baseUrl}/api/v1/challengers`);
+        const baseUrl = getApiV1BaseUrl();
+        const res = await fetch(`${baseUrl}/challengers`);
         if (!res.ok)
           throw new Error(
             "Could not decode matching registry telemetry arrays.",
@@ -99,9 +99,9 @@ export default function ChipukiziHubPage() {
     try {
       setLabRunning(true);
       setLabError(null);
-      const baseUrl = getApiBaseUrl();
+      const baseUrl = getApiV1BaseUrl();
 
-      const res = await fetch(`${baseUrl}/api/v1/challengers/analyze`, {
+      const res = await fetch(`${baseUrl}/challengers/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

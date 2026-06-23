@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getApiBaseUrl } from "@/app/lib/api_client";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import {
   ResponsiveContainer,
   BarChart,
@@ -56,10 +56,10 @@ export default function AILiveMonitor() {
   const [liveStreamLogs, setLiveStreamLogs] = useState<PipelineLog[]>([]);
 
   useEffect(() => {
-    const baseUrl = getApiBaseUrl();
+    const baseUrl = getApiV1BaseUrl();
 
     // 1. Fetch initial baseline states from backend
-    fetch(`${baseUrl}/api/corruption-watch/summary`)
+    fetch(`${baseUrl}/corruption-watch/summary`)
       .then((res) => res.ok && res.json())
       .then((data) => data && setMetrics((prev) => ({ ...prev, ...data })))
       .catch((err) => console.error("Summary hydration failed:", err));
@@ -116,7 +116,7 @@ export default function AILiveMonitor() {
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-red-500 selection:text-white">
       {/* Top Fixed Global Context Header Strip */}
       <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="max-w-7xl mx-auto flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
           <div className="flex items-center gap-3">
             <div className="bg-red-600 text-white font-black text-xs px-2.5 py-1 rounded tracking-tighter uppercase animate-pulse">
               LIVE MATRIX
@@ -134,11 +134,11 @@ export default function AILiveMonitor() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+          <div className="flex shrink-0 items-center space-x-2 rounded-lg border border-slate-800 bg-slate-900 px-3 py-1.5">
             <span
               className={`h-2 w-2 rounded-full ${isConnected ? "bg-emerald-500 shadow-[0_0_10px_#10b981]" : "bg-rose-500 animate-pulse"}`}
             />
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400">
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-300">
               {isConnected ? "Live Telemetry Active" : "Connecting Stream"}
             </span>
           </div>
@@ -147,7 +147,7 @@ export default function AILiveMonitor() {
 
       {/* Primary Navigation System */}
       <nav className="bg-slate-950 border-b border-slate-900 sticky top-[68px] z-40 px-4">
-        <div className="max-w-7xl mx-auto flex overflow-x-auto space-x-8">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-3 overflow-x-auto py-2">
           <a
             href="/dashboard"
             className="border-b-2 border-transparent text-slate-400 hover:text-slate-200 py-3.5 text-xs font-mono font-bold uppercase whitespace-nowrap flex items-center gap-2"
@@ -176,9 +176,9 @@ export default function AILiveMonitor() {
       </nav>
 
       {/* Main Container Layout */}
-      <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-8">
+      <main className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-8">
         {/* Top High-Density Metric Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 flex items-center justify-between">
             <div className="space-y-1">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
@@ -240,9 +240,9 @@ export default function AILiveMonitor() {
         </section>
 
         {/* Live Tracking Visualization Core */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Chart Frame */}
-          <div className="lg:col-span-1 bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+          <div className="lg:col-span-1 bg-slate-900 p-5 sm:p-6 rounded-2xl border border-slate-800 flex flex-col justify-between min-h-[320px]">
             <div>
               <h3 className="text-sm font-mono uppercase tracking-wider text-slate-400 mb-1">
                 Sectoral Anomaly Spreads
@@ -284,7 +284,7 @@ export default function AILiveMonitor() {
           </div>
 
           {/* SSE Stream Logs Container */}
-          <div className="lg:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div className="lg:col-span-2 bg-slate-900 p-5 sm:p-6 rounded-2xl border border-slate-800 space-y-4 min-h-[320px]">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="text-sm font-mono uppercase tracking-wider text-slate-400">
@@ -300,7 +300,7 @@ export default function AILiveMonitor() {
               />
             </div>
 
-            <div className="overflow-y-auto max-h-[340px] space-y-2.5 pr-2 hide-scrollbar">
+            <div className="overflow-y-auto max-h-[340px] sm:max-h-[420px] space-y-2.5 pr-2 hide-scrollbar">
               {liveStreamLogs.length === 0 ? (
                 <div className="text-center py-24 text-xs font-mono text-slate-500 animate-pulse">
                   Awaiting ingestion blocks from upstream threads...

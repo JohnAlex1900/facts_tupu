@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getApiBaseUrl } from "@/app/lib/api_client";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import {
   FileText,
   Loader2,
@@ -226,8 +226,8 @@ export default function ChallengerOnboardingWizard() {
     };
 
     try {
-      const baseUrl = getApiBaseUrl();
-      const res = await fetch(`${baseUrl}/api/v1/challengers/register`, {
+      const baseUrl = getApiV1BaseUrl();
+      const res = await fetch(`${baseUrl}/challengers/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

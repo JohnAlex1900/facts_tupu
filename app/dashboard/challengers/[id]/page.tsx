@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getApiBaseUrl } from "@/app/lib/api_client";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import {
   ArrowLeft,
   ShieldAlert,
@@ -60,8 +60,8 @@ export default function ChallengerScorecardPage() {
     async function fetchChallengerDetails() {
       try {
         setLoading(true);
-        const baseUrl = getApiBaseUrl();
-        const res = await fetch(`${baseUrl}/api/v1/challengers/${id}`);
+        const baseUrl = getApiV1BaseUrl();
+        const res = await fetch(`${baseUrl}/challengers/${id}`);
 
         if (!res.ok) {
           throw new Error("Failed to load this challenger's profile data.");
