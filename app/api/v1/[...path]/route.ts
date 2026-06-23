@@ -5,10 +5,8 @@ const BACKEND_PREFIX = "/api/v1";
 
 async function proxy(request: NextRequest) {
   try {
-    const targetPath =
-      request.nextUrl.pathname.replace(BACKEND_PREFIX, "") || "/";
     const backendBase = getApiBaseUrl();
-    const backendUrl = new URL(`${backendBase}${targetPath}`);
+    const backendUrl = new URL(request.nextUrl.pathname, backendBase);
     backendUrl.search = request.nextUrl.search;
 
     const headers = new Headers(request.headers);
