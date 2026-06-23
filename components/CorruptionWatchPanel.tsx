@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   AlertCircle,
   TrendingUp,
@@ -60,10 +61,11 @@ export default function CorruptionWatch({
         setLoading(true);
         setError(false);
 
+        const baseUrl = getApiBaseUrl();
         const [summaryRes, sectorsRes, logsRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/corruption-watch/summary"),
-          fetch("http://127.0.0.1:8000/api/corruption-watch/sector-anomalies"),
-          fetch("http://127.0.0.1:8000/api/corruption-watch/pipeline-logs"),
+          fetch(`${baseUrl}/api/corruption-watch/summary`),
+          fetch(`${baseUrl}/api/corruption-watch/sector-anomalies`),
+          fetch(`${baseUrl}/api/corruption-watch/pipeline-logs`),
         ]);
 
         if (!summaryRes.ok || !sectorsRes.ok || !logsRes.ok) throw new Error();

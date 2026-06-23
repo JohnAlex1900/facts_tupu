@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   Search,
   ShieldAlert,
@@ -66,8 +67,7 @@ export default function ChipukiziHubPage() {
     const fetchChallengers = async () => {
       try {
         setLoading(true);
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const baseUrl = getApiBaseUrl();
         const res = await fetch(`${baseUrl}/api/v1/challengers`);
         if (!res.ok)
           throw new Error(
@@ -99,8 +99,7 @@ export default function ChipukiziHubPage() {
     try {
       setLabRunning(true);
       setLabError(null);
-      const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const baseUrl = getApiBaseUrl();
 
       const res = await fetch(`${baseUrl}/api/v1/challengers/analyze`, {
         method: "POST",

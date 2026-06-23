@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   Flame,
-  ShieldAlert,
   BarChart3,
   MapPin,
   Search,
@@ -81,14 +80,14 @@ interface LeaderProfile {
 
 export default function PlatformLandingPage() {
   const [lang, setLang] = useState<"en" | "sw" | "sheng">("en");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCounty, setSelectedCounty] = useState("All");
+  const [selectedCounty] = useState("All");
   let token: string | null = null;
 
   if (typeof window !== "undefined") {
     token = localStorage.getItem("facts_tupu_token");
   }
 
+  const [searchQuery] = useState("");
   const [leaders] = useState<LeaderProfile[]>([
     {
       id: "LD-001",

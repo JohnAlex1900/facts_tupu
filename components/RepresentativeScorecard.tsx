@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   Loader2,
   AlertTriangle,
@@ -58,8 +59,9 @@ export default function RepresentativeScorecard({
 
       try {
         setLoading(true);
+        const baseUrl = getApiBaseUrl();
         const response = await fetch(
-          `http://127.0.0.1:8000/api/representatives/${repId}`,
+          `${baseUrl}/api/representatives/${repId}`,
         );
 
         if (!response.ok) {

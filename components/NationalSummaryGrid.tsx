@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import { Loader2, AlertTriangle } from "lucide-react";
 
 // Explicit TypeScript shape mapping to backend schema returns
@@ -32,8 +33,9 @@ export default function NationalSummaryGrid({
       try {
         setLoading(true);
         // Correct path alignment with the main FastAPI engine core route
+        const baseUrl = getApiBaseUrl();
         const response = await fetch(
-          "http://127.0.0.1:8000/api/representatives",
+          `${baseUrl}/api/representatives`,
         );
 
         if (!response.ok) {

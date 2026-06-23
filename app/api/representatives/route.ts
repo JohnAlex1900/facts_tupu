@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
-
-// Fall back onto standard local loop configurations if an environment variable isn't defined yet
-const BACKEND_ENGINE_URL =
-  process.env.BACKEND_API_URL || "http://127.0.0.1:8000";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 
 export async function GET(request: Request) {
+  const BACKEND_ENGINE_URL = getApiBaseUrl();
   try {
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get("limit") || "100";

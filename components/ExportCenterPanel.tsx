@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   Download,
   FileText,
   FileSpreadsheet,
   Loader2,
-  CheckCircle2,
   Cpu,
-  Sparkles,
   RefreshCw,
   AlertCircle,
 } from "lucide-react";
@@ -65,7 +64,8 @@ export default function ExportCenterPanel() {
   const downloadFile = async (format: string) => {
     if (format === "PDF") {
       // Direct integration link hitting the Python backend route
-      window.open("http://127.0.0.1:8000/api/export/dossier", "_blank");
+      const baseUrl = getApiBaseUrl();
+      window.open(`${baseUrl}/api/export/dossier`, "_blank");
     }
   };
 

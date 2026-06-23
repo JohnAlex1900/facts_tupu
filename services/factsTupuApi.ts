@@ -5,8 +5,9 @@ import {
   ScorecardResponse,
 } from "../types";
 
-const BASE_API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
+
+const BASE_API_URL = getApiV1BaseUrl();
 
 export const factsTupuApi = {
   /**

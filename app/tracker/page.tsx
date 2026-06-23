@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
 import {
   CheckCircle,
   AlertTriangle,
@@ -37,8 +38,7 @@ export default function PromiseTrackerPage() {
     async function loadTrackerPayloads() {
       try {
         setLoading(true);
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+        const baseUrl = getApiV1BaseUrl();
         const res = await fetch(`${baseUrl}/tracker/promises`, {
           cache: "no-store",
         });

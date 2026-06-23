@@ -3,8 +3,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
-  Target,
   FileText,
   Loader2,
   AlertCircle,
@@ -166,7 +166,7 @@ export default function ChallengerOnboardingWizard() {
     ) {
       setSelectedWard(NAIROBI_GEOGRAPHY[selectedConstituency][0]);
     }
-  }, [selectedConstituency]);
+  }, [selectedCounty, selectedConstituency]);
 
   // Document parsing loop
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -226,8 +226,7 @@ export default function ChallengerOnboardingWizard() {
     };
 
     try {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const baseUrl = getApiBaseUrl();
       const res = await fetch(`${baseUrl}/api/v1/challengers/register`, {
         method: "POST",
         headers: {
@@ -551,7 +550,6 @@ export default function ChallengerOnboardingWizard() {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <PremiumCheckoutTerminal
               challengerId={generatedChallengerId}
-              targetSeat={formData.target_seat_id}
               onSuccess={handlePaymentSuccess}
             />
           </div>

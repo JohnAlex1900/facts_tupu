@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   Building2,
   Network,
@@ -45,9 +46,10 @@ export default function AssetConflictMatrix({
         setLoading(true);
         setError(false);
 
+        const baseUrl = getApiBaseUrl();
         const [summaryRes, clustersRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/conflict-matrix/summary"),
-          fetch("http://127.0.0.1:8000/api/conflict-matrix/nexus-clusters"),
+          fetch(`${baseUrl}/api/conflict-matrix/summary`),
+          fetch(`${baseUrl}/api/conflict-matrix/nexus-clusters`),
         ]);
 
         if (!summaryRes.ok || !clustersRes.ok) throw new Error();

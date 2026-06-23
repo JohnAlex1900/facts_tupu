@@ -13,6 +13,7 @@ import {
   Activity,
 } from "lucide-react";
 import Link from "next/link";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
 interface ChallengerMatch {
@@ -166,17 +167,26 @@ export default function AccountabilityWallDashboard() {
 
   useEffect(() => {
     async function loadDashboardRegistry() {
+      const baseUrl = getApiBaseUrl();
+      const requestUrl = `${baseUrl}/api/v1/profiles`;
+
       try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/v1/profiles`);
+        const res = await fetch(requestUrl);
         if (res.ok) {
           const data = await res.json();
           setProfiles(data);
+        } else {
+          console.error(
+            "Failed to fetch dashboard profiles.",
+            requestUrl,
+            res.status,
+            res.statusText,
+          );
         }
       } catch (err) {
         console.error(
           "Critical tracking stream synchronization execution failure:",
+          requestUrl,
           err,
         );
       } finally {

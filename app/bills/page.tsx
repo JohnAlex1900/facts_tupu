@@ -2,14 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {
-  FileText,
-  CheckCircle2,
-  XCircle,
-  Users,
-  Search,
-  AlertCircle,
-} from "lucide-react";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
+import { AlertCircle } from "lucide-react";
 
 interface BillSummary {
   bill_id: string;
@@ -27,16 +21,13 @@ export default function BillsHubPage() {
   const router = useRouter();
   const [bills, setBills] = useState<BillSummary[]>([]);
   const [selectedBillId, setSelectedBillId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     async function fetchBillsTelemetry() {
       try {
         setLoading(true);
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+        const baseUrl = getApiV1BaseUrl();
         const res = await fetch(`${baseUrl}/bills`, { cache: "no-store" });
 
         if (!res.ok)
@@ -83,7 +74,7 @@ export default function BillsHubPage() {
     }
 
     fetchBillsTelemetry();
-  }, []);
+  }, [selectedBillId]);
 
   const activeBill = bills.find((b) => b.bill_id === selectedBillId);
   const totalVotes = activeBill
@@ -91,10 +82,6 @@ export default function BillsHubPage() {
       activeBill.total_nays +
       activeBill.total_abstentions
     : 0;
-  const ayePercentage =
-    activeBill && totalVotes > 0
-      ? (activeBill.total_ayes / totalVotes) * 180
-      : 0; // standard bar mapping
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8">

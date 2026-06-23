@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   ArrowLeft,
-  ShieldAlert,
-  CheckCircle2,
   AlertTriangle,
   Layers,
   HardDrive,
@@ -70,8 +69,7 @@ export default function LeaderDossierPage({
     const fetchLeaderDossier = async () => {
       try {
         setLoading(true);
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const baseUrl = getApiBaseUrl();
         const response = await fetch(
           `${baseUrl}/api/v1/profiles/${resolvedParams.id}`,
         );

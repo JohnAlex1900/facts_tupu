@@ -1,16 +1,26 @@
 // /app/api/api_client.ts
 
-const BASE_API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://unchanged-collector-prelaunch.ngrok-free.dev";
+const BASE_API_URL = process.env.NEXT_PUBLIC_API_URL?.trim();
 
-const BASE_URL = `${BASE_API_URL}/api/v1`;
+export const getApiBaseUrl = () => {
+  if (!BASE_API_URL) {
+    console.warn(
+      "NEXT_PUBLIC_API_URL is not defined. Falling back to localhost for local development only.",
+    );
+    return "http://localhost:8000";
+  }
+  return BASE_API_URL.replace(/\/+$/g, "");
+};
+
+export const getApiV1BaseUrl = () => `${getApiBaseUrl()}/api/v1`;
+
+const BASE_URL = `${getApiV1BaseUrl()}`;
 
 // Helper to convert an object into URL query parameters
 function buildQueryParams(params?: Record<string, unknown>): string {
   if (!params) return "";
   const cleanParams = Object.fromEntries(
-    Object.entries(params).filter(([_, v]) => v !== undefined),
+    Object.entries(params).filter(([, v]) => v !== undefined),
   );
   return "?" + new URLSearchParams(cleanParams as never).toString();
 }

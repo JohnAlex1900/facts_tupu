@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { auth } from "@/app/lib/firebase";
 import { ShieldCheck, Loader2, AlertCircle } from "lucide-react";
+import { getApiBaseUrl } from "../lib/api_client";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -42,8 +43,7 @@ export default function AuthPage() {
       const user = userCredential.user;
 
       // 2. Exchange Firebase Identity for Facts Tupu Backend JWT
-      const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const baseUrl = getApiBaseUrl();
       const res = await fetch(`${baseUrl}/api/v1/auth/firebase-exchange`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

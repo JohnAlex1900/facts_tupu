@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { Smartphone, ShieldCheck, Loader2, AlertCircle } from "lucide-react";
+import { ShieldCheck, Loader2, AlertCircle } from "lucide-react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 
 interface CheckoutProps {
   challengerId: string;
-  targetSeat: string;
   onSuccess: () => void;
 }
 
 export default function PremiumCheckoutTerminal({
   challengerId,
-  targetSeat,
   onSuccess,
 }: CheckoutProps) {
   const [status, setStatus] = useState<
@@ -32,8 +31,7 @@ export default function PremiumCheckoutTerminal({
       // Fake a 2.5 second network delay to simulate M-PESA processing
       await new Promise((resolve) => setTimeout(resolve, 2500));
 
-      const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const baseUrl = getApiBaseUrl();
       const res = await fetch(`${baseUrl}/api/v1/payments/simulate-success`, {
         method: "POST",
         headers: {

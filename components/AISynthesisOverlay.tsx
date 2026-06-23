@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   Activity,
   ShieldAlert,
@@ -38,9 +39,8 @@ export default function GlobalAIMonitorDashboard() {
   const fetchGlobalFeed = async (isSilent = false) => {
     if (!isSilent) setIsLoading(true);
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/ai-monitor/global",
-      );
+      const baseUrl = getApiBaseUrl();
+      const response = await fetch(`${baseUrl}/api/ai-monitor/global`);
       if (!response.ok)
         throw new Error("Failed to fetch global AI intelligence feed.");
       const result = await response.json();

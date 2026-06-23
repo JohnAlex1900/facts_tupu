@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   ArrowLeft,
   ShieldAlert,
@@ -59,8 +60,7 @@ export default function ChallengerScorecardPage() {
     async function fetchChallengerDetails() {
       try {
         setLoading(true);
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const baseUrl = getApiBaseUrl();
         const res = await fetch(`${baseUrl}/api/v1/challengers/${id}`);
 
         if (!res.ok) {

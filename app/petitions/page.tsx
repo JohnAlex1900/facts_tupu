@@ -1,15 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  FileEdit,
-  ShieldCheck,
-  Milestone,
-  Users,
-  Flame,
-  Send,
-  Search,
-} from "lucide-react";
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
+import { FileEdit, ShieldCheck, Users, Send } from "lucide-react";
 
 interface PetitionItem {
   petition_id: string;
@@ -40,13 +33,12 @@ export default function PetitionsAssemblyPage() {
   useEffect(() => {
     async function loadActivePetitions() {
       try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+        const baseUrl = getApiV1BaseUrl();
         const res = await fetch(`${baseUrl}/petitions`, { cache: "no-store" });
         if (!res.ok) throw new Error("Ledger transmission error");
         const data = await res.json();
         setPetitions(data);
-      } catch (err) {
+      } catch {
         // Localized seed data simulating official constituency targets
         setPetitions([
           {
@@ -88,8 +80,7 @@ export default function PetitionsAssemblyPage() {
     e.preventDefault();
     try {
       setSubmitting(true);
-      const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+      const baseUrl = getApiV1BaseUrl();
 
       const payload = {
         ...formData,
@@ -117,7 +108,7 @@ export default function PetitionsAssemblyPage() {
         type: "AUDIT_BRIEF",
         summary: "",
       });
-    } catch (err) {
+    } catch {
       console.warn(
         "API route non-responsive, updating client state with local unique hash indices",
       );

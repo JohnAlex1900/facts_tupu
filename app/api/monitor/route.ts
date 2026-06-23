@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
     const min_accountability = searchParams.get("min_accountability");
 
     // Construct the backend destination URL dynamically
-    const backendUrl = new URL("http://127.0.0.1:8000/api/v1/monitor");
+    const backendUrl = new URL(`${getApiBaseUrl()}/api/v1/monitor`);
     if (tier) backendUrl.searchParams.append("tier", tier);
     if (severity) backendUrl.searchParams.append("severity", severity);
     if (min_accountability)

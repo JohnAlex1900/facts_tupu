@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   BarChart3,
   Activity,
@@ -23,8 +24,7 @@ export default function IntelSubmissionPortal() {
     "idle" | "processing_payment" | "uploading" | "success" | "error"
   >("idle");
 
-  const BACKEND_API_BASE_URL =
-    "https://unchanged-collector-prelaunch.ngrok-free.dev";
+  const BACKEND_API_BASE_URL = getApiBaseUrl();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

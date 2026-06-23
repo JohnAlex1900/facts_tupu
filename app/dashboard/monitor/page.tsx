@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   ResponsiveContainer,
   BarChart,
@@ -33,7 +34,6 @@ interface PipelineLog {
 }
 
 export default function AILiveMonitor() {
-  const [lang] = useState<"en">("en");
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
   // Real-time telemetry metrics state
@@ -55,24 +55,23 @@ export default function AILiveMonitor() {
 
   const [liveStreamLogs, setLiveStreamLogs] = useState<PipelineLog[]>([]);
 
-  const BACKEND_API_BASE_URL =
-    "https://unchanged-collector-prelaunch.ngrok-free.dev";
-
   useEffect(() => {
+    const baseUrl = getApiBaseUrl();
+
     // 1. Fetch initial baseline states from backend
-    fetch(`${BACKEND_API_BASE_URL}/api/corruption-watch/summary`)
+    fetch(`${baseUrl}/api/corruption-watch/summary`)
       .then((res) => res.ok && res.json())
       .then((data) => data && setMetrics((prev) => ({ ...prev, ...data })))
       .catch((err) => console.error("Summary hydration failed:", err));
 
-    fetch(`${BACKEND_API_BASE_URL}/api/corruption-watch/sector-anomalies`)
+    fetch(`${baseUrl}/api/corruption-watch/sector-anomalies`)
       .then((res) => res.ok && res.json())
       .then((data) => data && setSectorData(data))
       .catch((err) => console.error("Sector metrics hydration failed:", err));
 
     // 2. Multi-Vector Server-Sent Events (SSE) Stream Integration
     const monitorStream = new EventSource(
-      `${BACKEND_API_BASE_URL}/api/representatives/stream`,
+      `${baseUrl}/api/representatives/stream`,
     );
 
     monitorStream.onopen = () => setIsConnected(true);

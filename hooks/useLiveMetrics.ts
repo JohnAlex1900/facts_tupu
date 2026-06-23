@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { PoliticianProfile, LiveMetricUpdateMessage } from "../types";
 
-const STREAM_URL = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/stream/metrics`;
+import { getApiV1BaseUrl } from "@/app/lib/api_client";
+
+const STREAM_URL = `${getApiV1BaseUrl()}/stream/metrics`;
 
 export function useLiveMetrics(initialProfiles: PoliticianProfile[]) {
   const [profiles, setProfiles] =
