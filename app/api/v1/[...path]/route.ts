@@ -14,6 +14,7 @@ async function proxy(request: NextRequest) {
     const headers = new Headers(request.headers);
     headers.delete("host");
     headers.set("x-forwarded-host", request.headers.get("host") ?? "");
+    headers.set("ngrok-skip-browser-warning", "true");
 
     const response = await fetch(backendUrl.toString(), {
       method: request.method,
