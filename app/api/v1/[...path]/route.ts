@@ -14,10 +14,15 @@ async function proxy(request: NextRequest) {
     headers.set("x-forwarded-host", request.headers.get("host") ?? "");
     headers.set("ngrok-skip-browser-warning", "true");
 
+    let body: BodyInit | null = null;
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      body = await request.text();
+    }
+
     const response = await fetch(backendUrl.toString(), {
       method: request.method,
       headers,
-      body: request.body,
+      body: body || undefined,
     });
 
     const responseHeaders = new Headers(response.headers);
