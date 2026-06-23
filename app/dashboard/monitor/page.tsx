@@ -55,7 +55,8 @@ export default function AILiveMonitor() {
 
   const [liveStreamLogs, setLiveStreamLogs] = useState<PipelineLog[]>([]);
 
-  const BACKEND_API_BASE_URL = "http://localhost:8000";
+  const BACKEND_API_BASE_URL =
+    "https://unchanged-collector-prelaunch.ngrok-free.dev";
 
   useEffect(() => {
     // 1. Fetch initial baseline states from backend

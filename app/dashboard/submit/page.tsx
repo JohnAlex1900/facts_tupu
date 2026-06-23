@@ -23,7 +23,8 @@ export default function IntelSubmissionPortal() {
     "idle" | "processing_payment" | "uploading" | "success" | "error"
   >("idle");
 
-  const BACKEND_API_BASE_URL = "http://localhost:8000";
+  const BACKEND_API_BASE_URL =
+    "https://unchanged-collector-prelaunch.ngrok-free.dev";
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

@@ -1,7 +1,10 @@
 // /app/api/api_client.ts
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const BASE_API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://unchanged-collector-prelaunch.ngrok-free.dev";
+
+const BASE_URL = `${BASE_API_URL}/api/v1`;
 
 // Helper to convert an object into URL query parameters
 function buildQueryParams(params?: Record<string, unknown>): string {
