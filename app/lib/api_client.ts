@@ -1,8 +1,12 @@
 // /app/api/api_client.ts
 
-const BASE_API_URL = process.env.NEXT_PUBLIC_API_URL?.trim();
-
 export const getApiBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    // Use same-origin browser proxy for frontend requests to avoid CORS.
+    return "";
+  }
+
+  const BASE_API_URL = process.env.NEXT_PUBLIC_API_URL?.trim();
   if (!BASE_API_URL) {
     console.warn(
       "NEXT_PUBLIC_API_URL is not defined. Falling back to localhost for local development only.",
@@ -12,7 +16,12 @@ export const getApiBaseUrl = () => {
   return BASE_API_URL.replace(/\/+$/g, "");
 };
 
-export const getApiV1BaseUrl = () => `${getApiBaseUrl()}/api/v1`;
+export const getApiV1BaseUrl = () => {
+  if (typeof window !== "undefined") {
+    return "/api/v1";
+  }
+  return `${getApiBaseUrl()}/api/v1`;
+};
 
 const BASE_URL = `${getApiV1BaseUrl()}`;
 
