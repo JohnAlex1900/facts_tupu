@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getApiV1BaseUrl } from "@/app/lib/api_client";
+import { getApiBaseUrl } from "@/app/lib/api_client";
 import {
   ResponsiveContainer,
   BarChart,
@@ -56,7 +56,7 @@ export default function AILiveMonitor() {
   const [liveStreamLogs, setLiveStreamLogs] = useState<PipelineLog[]>([]);
 
   useEffect(() => {
-    const baseUrl = getApiV1BaseUrl();
+    const baseUrl = getApiBaseUrl();
 
     // 1. Fetch initial baseline states from backend
     fetch(`${baseUrl}/corruption-watch/summary`)
