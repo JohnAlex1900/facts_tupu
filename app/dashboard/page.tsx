@@ -554,7 +554,7 @@ export default function AccountabilityWallDashboard() {
                     </strong>
                   </span>
                   <Link
-                    href={`/dashboard/leaders/${prof.id}`}
+                    href={`/leaders/${prof.id}`}
                     className="text-red-400 hover:text-red-300 font-bold flex items-center gap-0.5 transition group"
                   >
                     Inspect Full Dossier
