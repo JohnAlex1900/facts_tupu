@@ -1,39 +1,21 @@
-// app/layout.tsx
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-// 1. Import your brand new provider component
-import Providers from "./providers";
+import { QuotaProvider } from "@/components/QuotaContext";
+import "@/app/globals.css"; // Your Tailwind imports
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "Facts Tupu — AI Live Monitor",
+export const metadata = {
+  title: "FACTS TUPU | Accountability & Intelligence Platform",
   description:
-    "Facts Tupu platform for tracking accountability, live corruption monitoring, and representative performance.",
+    "AI-driven SaaS metrics and tracking framework for administrative governance.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        {/* 2. Wrap your children here to pass down context */}
-        <Providers>{children}</Providers>
+    <html lang="en" className="bg-slate-950 text-slate-50 antialiased">
+      <body>
+        <QuotaProvider>{children}</QuotaProvider>
       </body>
     </html>
   );
