@@ -104,11 +104,10 @@ export default function AIMonitorSector() {
       <div className="bg-gradient-to-r from-emerald-950/20 to-slate-950/50 border border-emerald-900/30 p-4 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4">
         <div className="space-y-0.5">
           <span className="text-[10px] font-extrabold tracking-widest text-emerald-400 uppercase block">
-            Facts Tupu Portal Audit
+            Leader Analysis Panel
           </span>
           <p className="text-xs text-slate-300 font-medium">
-            Live evaluation matrices constructed continuously via SerpApi
-            intelligence parsing and OpenAI structural filters.
+            Live evaluation matrices constructed continuously
           </p>
         </div>
 
