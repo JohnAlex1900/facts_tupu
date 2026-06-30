@@ -71,7 +71,11 @@ export default function ChallengerOnboardingForm({
   useEffect(() => {
     async function loadGeoHierarchy() {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/v1/geo/lookup`);
+        const res = await fetch(`${API_BASE_URL}/api/v1/geo/lookup`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
         if (!res.ok)
           throw new Error(
             "Could not parse operational administrative boundaries.",
