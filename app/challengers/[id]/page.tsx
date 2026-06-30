@@ -9,7 +9,11 @@ const BASE_API_URL =
 
 const fetchChallengerData = async (id: string) => {
   try {
-    const response = await fetch(`${BASE_API_URL}/api/v1/challengers/${id}`);
+    const response = await fetch(`${BASE_API_URL}/api/v1/challengers/${id}`, {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch challenger data from registry source.");
     }

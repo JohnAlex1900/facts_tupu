@@ -63,7 +63,11 @@ export default function PublicDashboard() {
   useEffect(() => {
     async function loadProfiles() {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/profiles`);
+        const response = await fetch(`${API_BASE_URL}/api/v1/profiles`, {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
         const data = await response.json();
         setProfiles(data);
       } catch (error) {

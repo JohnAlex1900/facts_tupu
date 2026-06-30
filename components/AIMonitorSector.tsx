@@ -39,7 +39,11 @@ export default function AIMonitorSector() {
 
     try {
       const url = `${API_BASE_URL}/api/v1/monitor/representatives?page=${pageNum}&limit=6&search=${encodeURIComponent(searchQuery)}`;
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      });
 
       if (!res.ok) {
         const errData = await res.json();

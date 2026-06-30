@@ -222,6 +222,9 @@ export default function ChallengerOnboardingForm({
         {
           method: "POST",
           body: payload,
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
         },
       );
 
