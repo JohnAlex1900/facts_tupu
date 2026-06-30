@@ -1,4 +1,5 @@
 import { QuotaProvider } from "@/components/QuotaContext";
+import Providers from "@/app/providers";
 import "@/app/globals.css"; // Your Tailwind imports
 
 export const metadata = {
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-slate-950 text-slate-50 antialiased">
       <body>
-        <QuotaProvider>{children}</QuotaProvider>
+        <Providers>
+          <QuotaProvider>{children}</QuotaProvider>
+        </Providers>
       </body>
     </html>
   );
