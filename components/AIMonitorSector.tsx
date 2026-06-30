@@ -15,6 +15,8 @@ interface RepresentativeAnalysisCard {
   sentiment_label: "STABLE" | "SPIKING" | "CRITICAL_SITUATION";
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function AIMonitorSector() {
   const [profiles, setProfiles] = useState<RepresentativeAnalysisCard[]>([]);
   const [search, setSearch] = useState("");
@@ -36,7 +38,7 @@ export default function AIMonitorSector() {
     else setIsAppending(true);
 
     try {
-      const url = `http://localhost:8000/api/v1/monitor/representatives?page=${pageNum}&limit=6&search=${encodeURIComponent(searchQuery)}`;
+      const url = `${API_BASE_URL}/api/v1/monitor/representatives?page=${pageNum}&limit=6&search=${encodeURIComponent(searchQuery)}`;
       const res = await fetch(url);
 
       if (!res.ok) {

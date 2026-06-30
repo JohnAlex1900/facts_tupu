@@ -27,6 +27,8 @@ interface RegionLookupResponse {
   counties: CountyLookupElement[];
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function ChallengerOnboardingForm({
   onCancel,
   onRegistrationSuccess,
@@ -69,7 +71,7 @@ export default function ChallengerOnboardingForm({
   useEffect(() => {
     async function loadGeoHierarchy() {
       try {
-        const res = await fetch("http://localhost:8000/api/v1/geo/lookup");
+        const res = await fetch(`${API_BASE_URL}/api/v1/geo/lookup`);
         if (!res.ok)
           throw new Error(
             "Could not parse operational administrative boundaries.",
@@ -216,7 +218,7 @@ export default function ChallengerOnboardingForm({
 
       // NOTE: Content-Type headers are excluded here to let the client agent define boundary limits implicitly
       const response = await fetch(
-        "http://localhost:8000/api/v1/challengers/onboard",
+        `${API_BASE_URL}/api/v1/challengers/onboard`,
         {
           method: "POST",
           body: payload,

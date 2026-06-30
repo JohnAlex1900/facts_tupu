@@ -37,6 +37,8 @@ interface Profile {
   challengers: Challenger[];
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function PublicDashboard() {
   const { lookupCount, maxQuota, accountTier, registerLookup } = useQuota();
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -61,7 +63,7 @@ export default function PublicDashboard() {
   useEffect(() => {
     async function loadProfiles() {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/profiles");
+        const response = await fetch(`${API_BASE_URL}/api/v1/profiles`);
         const data = await response.json();
         setProfiles(data);
       } catch (error) {
