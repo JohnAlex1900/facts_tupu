@@ -64,7 +64,7 @@ export default function ChallengerWorkspace({
       {/* PRIVATE WORKSPACE BANNER */}
       <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <span className="inline-block rounded bg-black/30 px-2 py-0.5 text-[10px] font-mono font-bold uppercase text-emerald-300 tracking-wider">
+          <span className="inline-block rounded bg-black/30 px-2 py-0.5 text-sm sm:text-[10px] font-mono font-bold uppercase text-emerald-300 tracking-wider">
             Verified Challenger Terminal
           </span>
           <h2 className="text-xl font-black text-white tracking-tight mt-1 sm:text-2xl">
@@ -138,7 +138,7 @@ export default function ChallengerWorkspace({
                     >
                       {metric.value}
                     </div>
-                    <div className="mt-1 text-[11px] text-slate-400 font-medium">
+                    <div className="mt-1 text-sm sm:text-[11px] text-slate-400 font-medium">
                       {metric.trend}
                     </div>
                   </div>
@@ -175,7 +175,7 @@ export default function ChallengerWorkspace({
 
               <div className="space-y-3">
                 <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
-                  <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                  <span className="text-sm sm:text-[10px] font-bold text-purple-400 uppercase tracking-wider">
                     Demographic Outreach Strategy
                   </span>
                   <p className="mt-1 text-xs text-slate-300">
@@ -185,7 +185,7 @@ export default function ChallengerWorkspace({
                   </p>
                 </div>
                 <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
-                  <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">
+                  <span className="text-sm sm:text-[10px] font-bold text-cyan-400 uppercase tracking-wider">
                     Optimal Policy Communication window
                   </span>
                   <p className="mt-1 text-xs text-slate-300">

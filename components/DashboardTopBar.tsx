@@ -14,15 +14,15 @@ export default function DashboardTopBar({
   return (
     <div className="bg-white border-b border-slate-200 h-16 px-6 flex items-center justify-between sticky top-0 z-30">
       {/* Search Input Node */}
-      <div className="w-96 relative">
+      <div className="w-full max-w-md sm:w-96 relative">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search Facts Tupu..."
-          className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-xs font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition"
+          className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm sm:text-xs font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition"
         />
-        <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-xs">
+        <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-sm sm:text-xs">
           🔍
         </span>
       </div>

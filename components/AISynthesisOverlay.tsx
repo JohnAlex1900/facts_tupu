@@ -117,7 +117,7 @@ export default function GlobalAIMonitorDashboard() {
           </div>
           <div className="flex flex-col items-end gap-1">
             <span
-              className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${
+              className={`px-2.5 py-0.5 rounded-md text-sm sm:text-[10px] font-black uppercase tracking-wider ${
                 isHighRisk
                   ? "bg-red-100 text-red-700"
                   : isElevated
@@ -127,7 +127,7 @@ export default function GlobalAIMonitorDashboard() {
             >
               {insight.risk_level} Risk
             </span>
-            <span className="text-[10px] text-slate-400 font-medium">
+            <span className="text-sm sm:text-[10px] text-slate-400 font-medium">
               {new Date(insight.timestamp).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -147,7 +147,7 @@ export default function GlobalAIMonitorDashboard() {
               {insight.ai_summary}
             </p>
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-50">
-              <span className="text-[11px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">
+              <span className="text-base sm:text-[11px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded">
                 Vector: {insight.category.replace("_", " ")}
               </span>
               {insight.source_url && (
@@ -155,7 +155,7 @@ export default function GlobalAIMonitorDashboard() {
                   href={insight.source_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[11px] font-bold text-blue-600 hover:underline flex items-center gap-1"
+                  className="text-base sm:text-[11px] font-bold text-blue-600 hover:underline flex items-center gap-1"
                 >
                   Source Logs <ExternalLink className="w-3 h-3" />
                 </a>

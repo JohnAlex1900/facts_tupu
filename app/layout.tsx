@@ -8,6 +8,12 @@ export const metadata = {
     "AI-driven SaaS metrics and tracking framework for administrative governance.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: {

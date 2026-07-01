@@ -102,7 +102,7 @@ export default function PremiumCheckoutTerminal({
         {status === "ERROR" && (
           <div className="mt-4 flex items-start gap-2 bg-rose-950/30 border border-rose-500/20 p-3 rounded-lg">
             <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
-            <p className="text-[11px] font-mono text-rose-300 leading-relaxed">
+            <p className="text-base sm:text-[11px] font-mono text-rose-300 leading-relaxed">
               {errorMessage}
             </p>
           </div>

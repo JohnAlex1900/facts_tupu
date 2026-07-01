@@ -89,7 +89,7 @@ export default function ExportCenterPanel() {
       <div className="space-y-3">
         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1 flex justify-between items-center">
           <span>Available Generation Scripts</span>
-          <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-black">
+          <span className="text-sm sm:text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-black">
             Compiler Pipeline Online
           </span>
         </div>

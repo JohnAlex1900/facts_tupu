@@ -263,12 +263,12 @@ export default function ChallengerOnboardingForm({
   const showWardField = formData.target_role === "mca";
 
   return (
-    <div className="w-full max-w-xl rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8 shadow-2xl animate-fadeIn">
+    <div className="w-full max-w-xl rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-8 shadow-2xl animate-fadeIn">
       <div className="mb-6">
         <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
           Deploy Alternative Track Profile
         </h2>
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-sm sm:text-xs text-slate-400">
           Complete verification registration to establish your dashboard metrics
           interface.
         </p>
@@ -283,7 +283,7 @@ export default function ChallengerOnboardingForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* OFFICIAL NAME */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+          <label className="block text-sm sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
             Official Name
           </label>
           <input
@@ -293,14 +293,14 @@ export default function ChallengerOnboardingForm({
             value={formData.full_name}
             onChange={handleChange}
             placeholder="e.g., Hon. Janet Omwamba"
-            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-600 outline-none transition focus:border-emerald-500"
+            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-3 text-sm text-slate-100 placeholder-slate-600 outline-none transition focus:border-emerald-500"
           />
         </div>
 
         {/* PARTY & TARGET LEVEL */}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <label className="block text-sm sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Party Affiliation
             </label>
             <input
@@ -310,19 +310,19 @@ export default function ChallengerOnboardingForm({
               value={formData.party_affiliation}
               onChange={handleChange}
               placeholder="e.g., Independent / ODM / UDA"
-              className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-600 outline-none transition focus:border-emerald-500"
+              className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-3 text-sm text-slate-100 placeholder-slate-600 outline-none transition focus:border-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <label className="block text-sm sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Target Seat Layer
             </label>
             <select
               name="target_role"
               value={formData.target_role}
               onChange={handleChange}
-              className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-2 text-sm text-slate-100 outline-none transition focus:border-emerald-500"
+              className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-3 text-sm text-slate-100 outline-none transition focus:border-emerald-500"
             >
               <option value="governor">Governor</option>
               <option value="senator">Senator</option>
@@ -335,13 +335,13 @@ export default function ChallengerOnboardingForm({
 
         {/* CASCADING BOUNDARY MATRIX */}
         <div className="bg-slate-950/40 p-4 rounded-xl border border-slate-800/80 space-y-4">
-          <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest block border-b border-slate-800/60 pb-1">
+          <span className="text-base sm:text-[11px] font-bold text-emerald-400 uppercase tracking-widest block border-b border-slate-800/60 pb-1">
             Target Boundary Area Lookup
           </span>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              <label className="block text-xs sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 1. Region Zone
               </label>
               <select
@@ -354,7 +354,7 @@ export default function ChallengerOnboardingForm({
                   setSelectedConstituency("");
                   setSelectedWard("");
                 }}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-1.5 text-xs text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
+                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-3 text-sm text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
               >
                 <option value="">
                   {isLoadingGeo
@@ -370,7 +370,7 @@ export default function ChallengerOnboardingForm({
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+              <label className="block text-xs sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                 2. County Jurisdiction
               </label>
               <select
@@ -382,7 +382,7 @@ export default function ChallengerOnboardingForm({
                   setSelectedConstituency("");
                   setSelectedWard("");
                 }}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-1.5 text-xs text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
+                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-3 text-sm text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
               >
                 <option value="">-- Select County --</option>
                 {availableCounties.map((c) => (
@@ -395,7 +395,7 @@ export default function ChallengerOnboardingForm({
 
             {showConstituencyField && (
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <label className="block text-xs sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   3. Constituency
                 </label>
                 <select
@@ -406,7 +406,7 @@ export default function ChallengerOnboardingForm({
                     setSelectedConstituency(e.target.value);
                     setSelectedWard("");
                   }}
-                  className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-1.5 text-xs text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
+                  className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-3 text-sm text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
                 >
                   <option value="">-- Select Constituency --</option>
                   {availableConstituencies.map((constItem) => (
@@ -423,7 +423,7 @@ export default function ChallengerOnboardingForm({
 
             {showWardField && (
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <label className="block text-xs sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   4. Local Assembly Ward
                 </label>
                 <select
@@ -431,7 +431,7 @@ export default function ChallengerOnboardingForm({
                   disabled={!selectedConstituency}
                   value={selectedWard}
                   onChange={(e) => setSelectedWard(e.target.value)}
-                  className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-1.5 text-xs text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
+                  className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-3 text-sm text-slate-100 outline-none transition focus:border-emerald-500 disabled:opacity-40"
                 >
                   <option value="">-- Select Ward --</option>
                   {availableWards.map((w) => (
@@ -447,7 +447,7 @@ export default function ChallengerOnboardingForm({
 
         {/* TEXT SUMMARY FIELDS */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+          <label className="block text-sm sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
             Manifesto Executive Summary
           </label>
           <textarea
@@ -457,7 +457,7 @@ export default function ChallengerOnboardingForm({
             value={formData.manifesto_summary}
             onChange={handleChange}
             placeholder="Outline your baseline structural pillars and developmental objectives for evaluation..."
-            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-600 outline-none transition focus:border-emerald-500 resize-none"
+            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3.5 py-3 text-sm text-slate-100 placeholder-slate-600 outline-none transition focus:border-emerald-500 resize-none"
           />
         </div>
 
@@ -503,10 +503,10 @@ export default function ChallengerOnboardingForm({
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                   />
                 </svg>
-                <span className="text-xs font-medium text-slate-300">
+                <span className="text-sm sm:text-xs font-medium text-slate-300">
                   Click to attach manifesto file
                 </span>
-                <span className="text-[10px] text-slate-500 mt-0.5">
+                <span className="text-sm sm:text-[10px] text-slate-500 mt-0.5">
                   Supports Scanned PDFs up to 15MB
                 </span>
               </>
@@ -530,7 +530,7 @@ export default function ChallengerOnboardingForm({
                     <span className="text-slate-200 font-medium truncate">
                       {manifestoFile.name}
                     </span>
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-sm sm:text-[10px] text-slate-500">
                       {(manifestoFile.size / (1024 * 1024)).toFixed(2)} MB
                     </span>
                   </div>
@@ -545,18 +545,18 @@ export default function ChallengerOnboardingForm({
                       setManifestoFile(null);
                       setScanStatus("idle");
                     }}
-                    className="text-[10px] font-bold tracking-wide uppercase text-slate-500 hover:text-slate-300 transition"
+                    className="text-sm sm:text-[10px] font-bold tracking-wide uppercase text-slate-500 hover:text-slate-300 transition"
                   >
                     Remove
                   </button>
                 )}
                 {scanStatus === "scanning" && (
-                  <span className="text-[10px] font-bold text-amber-400 uppercase animate-pulse flex items-center gap-1">
+                  <span className="text-sm sm:text-[10px] font-bold text-amber-400 uppercase animate-pulse flex items-center gap-1">
                     ⚡ Scanning OCR...
                   </span>
                 )}
                 {scanStatus === "verified" && (
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase bg-emerald-950/80 border border-emerald-800 px-1.5 py-0.5 rounded">
+                  <span className="text-sm sm:text-[10px] font-bold text-emerald-400 uppercase bg-emerald-950/80 border border-emerald-800 px-1.5 py-0.5 rounded">
                     ✓ Verified Structure
                   </span>
                 )}
@@ -566,7 +566,7 @@ export default function ChallengerOnboardingForm({
         </div>
 
         {/* FEE ESCROW STATEMENT */}
-        <div className="rounded-xl bg-slate-950 p-3.5 border border-slate-800/60 text-[11px] text-slate-400">
+        <div className="rounded-xl bg-slate-950 p-3.5 border border-slate-800/60 text-base sm:text-[11px] text-slate-400">
           <span className="font-bold text-white uppercase block mb-0.5">
             Verification Fee Commitment
           </span>
@@ -579,19 +579,19 @@ export default function ChallengerOnboardingForm({
         </div>
 
         {/* ACTION BLOCK */}
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
           <button
             type="button"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="rounded-lg border border-slate-800 px-4 py-2 text-xs font-bold text-slate-400 hover:bg-slate-800 transition"
+            className="w-full rounded-lg border border-slate-800 px-4 py-3 text-sm font-bold text-slate-400 hover:bg-slate-800 transition sm:w-auto"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting || isLoadingGeo}
-            className="rounded-lg bg-emerald-600 px-5 py-2 text-xs font-bold text-white hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition disabled:opacity-50 min-w-[200px]"
+            className="w-full rounded-lg bg-emerald-600 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition disabled:opacity-50 sm:w-auto sm:min-w-[220px]"
           >
             {isSubmitting ? submissionStage : "Pay KES 2,500 & Deploy Profile"}
           </button>

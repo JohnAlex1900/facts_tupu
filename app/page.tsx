@@ -4,12 +4,12 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
       {/* GLOBAL NAVIGATION LAYER */}
-      <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 px-4 lg:px-8 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-xl font-black tracking-tighter text-white">
+      <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 px-3 sm:px-4 lg:px-8 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-base sm:text-xl font-black tracking-tighter text-white">
             FACTS <span className="text-emerald-500">TUPU.</span>
           </span>
-          <span className="text-[10px] bg-slate-900 text-slate-400 font-mono font-bold px-1.5 py-0.5 rounded border border-slate-800">
+          <span className="hidden sm:inline-flex text-[10px] bg-slate-900 text-slate-400 font-mono font-bold px-1.5 py-0.5 rounded border border-slate-800">
             V1.0.0
           </span>
         </div>
@@ -39,14 +39,14 @@ export default function LandingPage() {
           ⚡ Public Leadership & Accountability Platform
         </div>
 
-        <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight max-w-3xl">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight max-w-3xl">
           Uncompromising Accountability For{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
             Every Elected Seat.
           </span>
         </h1>
 
-        <p className="text-sm sm:text-base text-slate-400 max-w-2xl font-normal leading-relaxed mb-10">
+        <p className="text-sm sm:text-base text-slate-400 max-w-2xl font-normal leading-relaxed mb-10 px-2 sm:px-0">
           Welcome to{" "}
           <strong className="text-white font-medium">facts tupu</strong>—a
           clear, reliable data platform tracking all levels of Kenyan
@@ -74,7 +74,7 @@ export default function LandingPage() {
         {/* LIVE PLATFORM METRICS */}
         <section
           id="metrics"
-          className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 border border-slate-900 bg-slate-950 p-4 rounded-2xl shadow-2xl mb-24 text-left"
+          className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 border border-slate-900 bg-slate-950 p-4 rounded-2xl shadow-2xl mb-24 text-left"
         >
           <div className="p-4 border-r border-slate-900 last:border-0">
             <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">
@@ -116,9 +116,9 @@ export default function LandingPage() {
             What You Can Explore Inside The Dashboard
           </h2>
 
-          <div className="grid gap-4 sm:grid-cols-3 pt-2">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pt-2">
             {/* FEATURE 1 */}
-            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-5 space-y-2">
+            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-4 sm:p-5 space-y-2">
               <div className="h-8 w-8 rounded-lg bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 text-sm font-bold">
                 01
               </div>
@@ -133,7 +133,7 @@ export default function LandingPage() {
             </div>
 
             {/* FEATURE 2 */}
-            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-5 space-y-2">
+            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-4 sm:p-5 space-y-2">
               <div className="h-8 w-8 rounded-lg bg-teal-950 border border-teal-800 flex items-center justify-center text-teal-400 text-sm font-bold">
                 02
               </div>
@@ -148,7 +148,7 @@ export default function LandingPage() {
             </div>
 
             {/* FEATURE 3 */}
-            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-5 space-y-2">
+            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-4 sm:p-5 space-y-2">
               <div className="h-8 w-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 text-sm font-bold">
                 03
               </div>

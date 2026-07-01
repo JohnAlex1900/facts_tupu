@@ -219,7 +219,7 @@ export default function NetworkGraph() {
   return (
     <div className="w-full min-height-[650px] bg-slate-950 rounded-xl border border-slate-800 text-slate-100 flex flex-col md:flex-row overflow-hidden font-sans">
       {/* --- Left Work Area: Simulation Graph Canvas --- */}
-      <div className="flex-1 p-6 flex flex-col relative min-w-[300px]">
+      <div className="flex-1 p-6 flex flex-col relative min-w-0 sm:min-w-[300px]">
         {/* Real-time Control Header HUD */}
         <div className="mb-4 flex flex-wrap gap-4 items-center justify-between z-10 bg-slate-950/80 backdrop-blur-sm p-3 rounded-lg border border-slate-900">
           <div className="flex items-center gap-3">
@@ -321,7 +321,7 @@ export default function NetworkGraph() {
                     x={(start.x + end.x) / 2}
                     y={(start.y + end.y) / 2 - 6}
                     textAnchor="middle"
-                    className="text-[9px] font-mono tracking-tight fill-slate-400 bg-slate-950 pointer-events-none"
+                    className="text-sm sm:text-[9px] font-mono tracking-tight fill-slate-400 bg-slate-950 pointer-events-none"
                   >
                     {edge.relationship.replace("_", " ")}
                   </text>
@@ -385,7 +385,7 @@ export default function NetworkGraph() {
                     x={11}
                     y={-9}
                     textAnchor="middle"
-                    className="text-[7px] font-bold fill-white pointer-events-none"
+                    className="text-xs sm:text-[7px] font-bold fill-white pointer-events-none"
                   >
                     {node.riskScore}
                   </text>
@@ -405,7 +405,7 @@ export default function NetworkGraph() {
                   <text
                     y={44}
                     textAnchor="middle"
-                    className="text-[9px] fill-slate-500 uppercase font-mono tracking-wider pointer-events-none select-none"
+                    className="text-sm sm:text-[9px] fill-slate-500 uppercase font-mono tracking-wider pointer-events-none select-none"
                   >
                     {node.sector}
                   </text>
@@ -415,7 +415,7 @@ export default function NetworkGraph() {
           </svg>
 
           {/* Clean User Instructions Footnote inside HUD Canvas */}
-          <div className="absolute bottom-3 left-3 pointer-events-none bg-slate-950/90 text-[10px] text-slate-400 px-2 py-1 rounded border border-slate-800 font-mono">
+          <div className="absolute bottom-3 left-3 pointer-events-none bg-slate-950/90 text-sm sm:text-[10px] text-slate-400 px-2 py-1 rounded border border-slate-800 font-mono">
             💡 Drag nodes to rearrange • Click to audit relationships
           </div>
         </div>

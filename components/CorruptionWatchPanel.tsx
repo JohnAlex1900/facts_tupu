@@ -239,7 +239,7 @@ export default function CorruptionWatch({
                       {log.title}
                     </h4>
                     <span
-                      className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                      className={`text-sm sm:text-[9px] font-bold px-1.5 py-0.5 rounded ${
                         log.status === "Critical"
                           ? "bg-rose-50 text-rose-600 border border-rose-100"
                           : "bg-amber-50 text-amber-600 border border-amber-100"
@@ -251,7 +251,7 @@ export default function CorruptionWatch({
                   <p className="text-xs font-semibold text-slate-600 mt-0.5">
                     {log.project}
                   </p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
+                  <p className="text-sm sm:text-[10px] font-bold text-slate-400 uppercase mt-1">
                     Sector: {log.sector} • {log.timestamp}
                   </p>
 

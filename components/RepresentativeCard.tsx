@@ -24,7 +24,7 @@ export function RepresentativeCard({ rep }: RepCardProps) {
       <div>
         <div className="flex justify-between items-start gap-2">
           <div>
-            <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">
+            <span className="text-sm sm:text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">
               {rep.party} • {rep.status}
             </span>
             <h3 className="text-base font-black text-slate-900 tracking-tight mt-2">
@@ -38,7 +38,7 @@ export function RepresentativeCard({ rep }: RepCardProps) {
             <span className="text-xl font-black text-slate-900 block">
               {rep.accountabilityScore}%
             </span>
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">
+            <span className="text-sm sm:text-[9px] font-bold text-slate-400 uppercase tracking-widest block">
               Accountability
             </span>
           </div>
@@ -54,9 +54,9 @@ export function RepresentativeCard({ rep }: RepCardProps) {
       </div>
 
       {/* Metric Vector Tracks */}
-      <div className="grid grid-cols-3 gap-2 mt-4 pt-2 text-center text-[11px] font-bold text-slate-700 border-t border-slate-50">
+      <div className="grid grid-cols-3 gap-2 mt-4 pt-2 text-center text-base sm:text-[11px] font-bold text-slate-700 border-t border-slate-50">
         <div>
-          <span className="block text-slate-400 text-[9px] uppercase tracking-wider">
+          <span className="block text-sm sm:text-[9px] text-slate-400 uppercase tracking-wider">
             Integrity
           </span>
           <span className="text-emerald-600">{rep.integrityVector}%</span>

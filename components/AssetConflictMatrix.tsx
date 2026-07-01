@@ -112,35 +112,35 @@ export default function AssetConflictMatrix({
       {/* METRIC CARD OVERVIEW HIGHLIGHTS */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+          <div className="text-sm sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
             Mattered Corporate Links
           </div>
           <div className="text-2xl font-black text-slate-800">
             {summary.mattered_corporate_links}
           </div>
-          <p className="text-[11px] text-slate-400 font-medium mt-1">
+          <p className="text-base sm:text-[11px] text-slate-400 font-medium mt-1">
             Cross-matched entities verified
           </p>
         </div>
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-          <div className="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">
+          <div className="text-sm sm:text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">
             Critical Intersects
           </div>
           <div className="text-2xl font-black text-red-600">
             {summary.critical_intersects}
           </div>
-          <p className="text-[11px] text-red-400 font-medium mt-1">
+          <p className="text-base sm:text-[11px] text-red-400 font-medium mt-1">
             Active oversight conflicts
           </p>
         </div>
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-          <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">
+          <div className="text-sm sm:text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">
             Proxy Confidence Level
           </div>
           <div className="text-2xl font-black text-indigo-600">
             {summary.proxy_confidence_level}%
           </div>
-          <p className="text-[11px] text-indigo-400 font-medium mt-1">
+          <p className="text-base sm:text-[11px] text-indigo-400 font-medium mt-1">
             Neural clustering threshold
           </p>
         </div>
@@ -186,12 +186,12 @@ export default function AssetConflictMatrix({
                   <div className="text-sm font-black text-slate-800">
                     {node.riskIndex}/100
                   </div>
-                  <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                  <div className="text-sm sm:text-[9px] font-bold text-slate-400 uppercase tracking-wider">
                     Matrix Risk
                   </div>
                 </div>
                 <span
-                  className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+                  className={`text-sm sm:text-[10px] font-bold px-2 py-1 rounded-full ${
                     node.status === "High Conflict"
                       ? "bg-red-50 text-red-700 border border-red-100"
                       : node.status === "Review Required"
@@ -226,7 +226,7 @@ export default function AssetConflictMatrix({
             </div>
 
             {/* Footer verification anchors */}
-            <div className="flex items-center justify-between pt-1 text-[11px] font-bold text-slate-400">
+            <div className="flex items-center justify-between pt-1 text-base sm:text-[11px] font-bold text-slate-400">
               <div className="flex items-center gap-3">
                 <a
                   href="https://brs.go.ke"

@@ -53,7 +53,7 @@ export default function IndividualScorecard({
         {/* LEADER MAIN IDENTITY BLOCK */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-slate-950 p-6 rounded-xl border border-slate-800/60">
           <div>
-            <span className="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 uppercase tracking-wider mb-2">
+            <span className="inline-block px-2.5 py-0.5 rounded text-sm sm:text-[10px] font-bold bg-slate-800 text-slate-400 uppercase tracking-wider mb-2">
               Current Leader ({leader.seat_layer})
             </span>
             <h2 className="text-2xl font-black text-white tracking-tight">
@@ -66,7 +66,7 @@ export default function IndividualScorecard({
           </div>
 
           {/* PRIMARY METRICS SUMMARY */}
-          <div className="w-full md:w-auto grid grid-cols-3 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800 min-w-[280px] sm:min-w-[320px]">
+          <div className="w-full md:w-auto grid grid-cols-3 gap-4 bg-slate-900 p-4 rounded-xl border border-slate-800 min-w-0 sm:min-w-[280px] md:min-w-[320px]">
             <div className="text-center">
               <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-tight">
                 Talk vs Action
@@ -134,7 +134,7 @@ export default function IndividualScorecard({
               Aspiring Challengers Eying This Position (
               {leader.challengers.length})
             </h3>
-            <span className="text-[11px] text-slate-500 italic">
+            <span className="text-base sm:text-[11px] text-slate-500 italic">
               Verified alternative options
             </span>
           </div>
@@ -158,7 +158,7 @@ export default function IndividualScorecard({
                       <h4 className="text-base font-bold text-slate-100">
                         {challenger.full_name}
                       </h4>
-                      <span className="shrink-0 px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-900/40">
+                      <span className="shrink-0 px-2 py-0.5 rounded text-sm sm:text-[9px] font-mono font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-900/40">
                         Growth Speed: +{challenger.public_traction_velocity}%
                       </span>
                     </div>

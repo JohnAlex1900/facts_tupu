@@ -109,7 +109,7 @@ export default function AIMonitorSector() {
       {/* ACTIONS SUB-HEADER & REAL-TIME SEARCH FIELD */}
       <div className="bg-gradient-to-r from-emerald-950/20 to-slate-950/50 border border-emerald-900/30 p-4 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4">
         <div className="space-y-0.5">
-          <span className="text-[10px] font-extrabold tracking-widest text-emerald-400 uppercase block">
+          <span className="text-base sm:text-[10px] font-extrabold tracking-widest text-emerald-400 uppercase block">
             Leader Analysis Panel
           </span>
           <p className="text-xs text-slate-300 font-medium">
@@ -126,11 +126,11 @@ export default function AIMonitorSector() {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-slate-950 border border-slate-850 focus:border-cyan-500 text-xs text-slate-200 pl-3 pr-8 py-1.5 rounded-lg outline-none transition-colors"
             />
-            <span className="absolute right-2.5 top-2 text-slate-500 text-[10px] select-none">
+            <span className="absolute right-2.5 top-2 text-slate-500 text-sm sm:text-[10px] select-none">
               🔍
             </span>
           </div>
-          <span className="hidden sm:inline-block text-[10px] font-mono bg-slate-950 px-2.5 py-1.5 border border-slate-800 text-slate-400 rounded-lg whitespace-nowrap">
+          <span className="hidden sm:inline-block text-sm sm:text-[10px] font-mono bg-slate-950 px-2.5 py-1.5 border border-slate-800 text-slate-400 rounded-lg whitespace-nowrap">
             System: Active 2026 Tracker
           </span>
         </div>
@@ -175,15 +175,15 @@ export default function AIMonitorSector() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex gap-1.5">
-                      <span className="text-[9px] font-bold bg-indigo-950/60 px-2 py-0.5 rounded text-indigo-400 border border-indigo-900 uppercase tracking-wider">
+                      <span className="text-sm sm:text-[9px] font-bold bg-indigo-950/60 px-2 py-0.5 rounded text-indigo-400 border border-indigo-900 uppercase tracking-wider">
                         {leader.type}
                       </span>
-                      <span className="text-[9px] font-bold bg-slate-950 px-2 py-0.5 rounded text-slate-400 border border-slate-800 uppercase tracking-wider">
+                      <span className="text-sm sm:text-[9px] font-bold bg-slate-950 px-2 py-0.5 rounded text-slate-400 border border-slate-800 uppercase tracking-wider">
                         {leader.target_role} • {leader.party_affiliation}
                       </span>
                     </div>
                     <span
-                      className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(leader.sentiment_label)}`}
+                      className={`text-sm sm:text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(leader.sentiment_label)}`}
                     >
                       {leader.sentiment_label.replace("_", " ")}
                     </span>
@@ -202,7 +202,7 @@ export default function AIMonitorSector() {
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
                     Live AI Monitor Summary:
                   </span>
-                  <ul className="space-y-2 text-[11px] text-slate-200 leading-relaxed font-medium line-clamp-4">
+                  <ul className="space-y-2 text-base sm:text-[11px] text-slate-200 leading-relaxed font-medium line-clamp-4">
                     {leader.analysis_points.slice(0, 3).map((point, index) => (
                       <li key={index} className="flex items-start gap-2">
                         <span className="text-emerald-500 mt-0.5 select-none">
@@ -215,7 +215,7 @@ export default function AIMonitorSector() {
                 </div>
 
                 <div className="space-y-1.5 pt-1">
-                  <div className="flex justify-between text-[11px] font-medium">
+                  <div className="flex justify-between text-base sm:text-[11px] font-medium">
                     <span className="text-slate-400">
                       Search Footprint Metric:
                     </span>
@@ -229,7 +229,7 @@ export default function AIMonitorSector() {
                       style={{ width: `${leader.traction_score}%` }}
                     />
                   </div>
-                  <span className="text-[9px] font-mono text-slate-500 block text-right pt-0.5">
+                  <span className="text-sm sm:text-[9px] font-mono text-slate-500 block text-right pt-0.5">
                     Audit Sync:{" "}
                     {new Date(leader.last_audit_timestamp).toLocaleTimeString(
                       [],
@@ -247,7 +247,7 @@ export default function AIMonitorSector() {
               <button
                 onClick={handleLoadMore}
                 disabled={isAppending}
-                className="px-6 py-2 bg-slate-950 border border-slate-850 hover:bg-slate-900 disabled:opacity-50 text-[11px] font-bold tracking-widest text-slate-300 rounded-xl uppercase transition-all"
+                className="px-6 py-2 bg-slate-950 border border-slate-850 hover:bg-slate-900 disabled:opacity-50 text-base sm:text-[11px] font-bold tracking-widest text-slate-300 rounded-xl uppercase transition-all"
               >
                 {isAppending
                   ? "Processing Next Cluster Nodes..."
@@ -324,7 +324,7 @@ export default function AIMonitorSector() {
                     style={{ width: `${selectedLeader.traction_score}%` }}
                   />
                 </div>
-                <div className="flex justify-between items-center mt-2 pt-0.5 text-[9px] font-mono text-slate-500">
+                <div className="flex justify-between items-center mt-2 pt-0.5 text-sm sm:text-[9px] font-mono text-slate-500">
                   <span>ID reference: {selectedLeader.id}</span>
                   <span>
                     Synced:{" "}

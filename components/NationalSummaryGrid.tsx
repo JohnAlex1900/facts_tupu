@@ -34,9 +34,7 @@ export default function NationalSummaryGrid({
         setLoading(true);
         // Correct path alignment with the main FastAPI engine core route
         const baseUrl = getApiBaseUrl();
-        const response = await fetch(
-          `${baseUrl}/api/representatives`,
-        );
+        const response = await fetch(`${baseUrl}/api/representatives`);
 
         if (!response.ok) {
           throw new Error(
@@ -110,7 +108,7 @@ export default function NationalSummaryGrid({
                   <div className="text-2xl font-black text-slate-900">
                     {rep.accountabilityScore}%
                   </div>
-                  <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                  <div className="text-sm sm:text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
                     Accountability
                   </div>
                 </div>

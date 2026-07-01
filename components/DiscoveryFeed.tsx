@@ -228,12 +228,12 @@ export default function DiscoveryFeed({
                   </div>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-slate-800/40 flex items-center justify-between text-[11px] text-slate-500">
+                <div className="mt-5 pt-3 border-t border-slate-800/40 flex items-center justify-between text-base sm:text-[11px] text-slate-500">
                   <span className="truncate max-w-[150px]">
                     {person.constituency ? `${person.constituency}, ` : ""}
                     {person.county}
                   </span>
-                  <span className="bg-slate-950 border border-slate-800 rounded px-1.5 py-0.5 text-[9px] font-mono tracking-tight text-slate-400">
+                  <span className="bg-slate-950 border border-slate-800 rounded px-1.5 py-0.5 text-sm sm:text-[9px] font-mono tracking-tight text-slate-400">
                     {person.tier}
                   </span>
                 </div>
