@@ -255,7 +255,7 @@ export default function ChallengerOnboardingForm({
     }
     {
       setIsSubmitting(false);
-      setSubmissionStage("Pay KES 2,500 & Deploy Profile");
+      setSubmissionStage("Pay KES 25,000 & Deploy Profile");
     }
   };
 

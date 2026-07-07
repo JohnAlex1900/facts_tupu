@@ -93,7 +93,7 @@ export default function InterceptorModal({
                   dynamic traction models.
                 </p>
                 <div className="mt-4 font-mono text-lg font-black text-white">
-                  KES 2,500{" "}
+                  KES 25,000{" "}
                   <span className="text-sm sm:text-[10px] text-slate-500 font-normal">
                     / validation
                   </span>
