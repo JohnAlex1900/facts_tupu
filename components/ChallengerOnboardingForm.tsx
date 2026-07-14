@@ -573,7 +573,7 @@ export default function ChallengerOnboardingForm({
           By deploying this alternative tracking model, you are initiating a
           tokenized gateway request of{" "}
           <span className="text-emerald-400 font-mono font-bold">
-            KES 2,500
+            KES 25,000
           </span>
           .
         </div>
@@ -593,7 +593,7 @@ export default function ChallengerOnboardingForm({
             disabled={isSubmitting || isLoadingGeo}
             className="w-full rounded-lg bg-emerald-600 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition disabled:opacity-50 sm:w-auto sm:min-w-[220px]"
           >
-            {isSubmitting ? submissionStage : "Pay KES 2,500 & Deploy Profile"}
+            {isSubmitting ? submissionStage : "Pay KES 25,000 & Deploy Profile"}
           </button>
         </div>
       </form>
