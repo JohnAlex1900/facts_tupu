@@ -23,7 +23,6 @@ export interface AdCampaign {
 }
 
 export default function TopAdBanner() {
-  // Pre-loaded with 4 ads so the dual-rotation effect is immediately visible
   const [ads, setAds] = useState<AdCampaign[]>([
     {
       id: "ad-1",
@@ -78,7 +77,7 @@ export default function TopAdBanner() {
     "opacity-100 translate-y-0 blur-none",
   );
 
-  // Form State for Admin Input
+  // Form State
   const [newBadge, setNewBadge] = useState("Sponsored");
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -86,21 +85,25 @@ export default function TopAdBanner() {
   const [newCtaLink, setNewCtaLink] = useState("https://");
   const [newImageUrl, setNewImageUrl] = useState("");
 
-  // Handle smooth auto-rotation animation transitions (Cycles 2 ads at a time)
+  // Responsive Auto-Rotation Logic
   useEffect(() => {
-    if (ads.length <= 2 || !isVisible) return; // Only rotate if we have more than 2 ads
+    if (ads.length <= 1 || !isVisible) return;
 
     const interval = setInterval(() => {
-      // Fade out and slight drop
+      // 1. Fade out smoothly
       setFadeState("opacity-0 translate-y-2 blur-[2px]");
 
       setTimeout(() => {
-        // Increment by 2 to show the next pair of ads
-        setCurrentIndex((prev) => (prev + 2) % ads.length);
-        // Fade back in
+        // 2. Check screen width securely on the client to determine steps
+        const isDesktop = window.innerWidth >= 1024; // 'lg' breakpoint
+        const step = isDesktop && ads.length > 1 ? 2 : 1; // 2 steps for desktop, 1 for mobile
+
+        setCurrentIndex((prev) => (prev + step) % ads.length);
+
+        // 3. Fade back in
         setFadeState("opacity-100 translate-y-0 blur-none");
       }, 500);
-    }, 8000); // Rotate every 8 seconds
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [ads.length, isVisible]);
@@ -120,12 +123,11 @@ export default function TopAdBanner() {
       imageUrl: newImageUrl,
     };
 
-    // Add to the front of the array so it shows immediately
     setAds([createdAd, ...ads]);
     setCurrentIndex(0);
     setIsFormOpen(false);
 
-    // Reset fields
+    // Reset Form
     setNewTitle("");
     setNewDescription("");
     setNewImageUrl("");
@@ -135,20 +137,19 @@ export default function TopAdBanner() {
 
   if (!isVisible || ads.length === 0) return null;
 
-  // Grab the two active ads for the current cycle
   const ad1 = ads[currentIndex % ads.length];
   const ad2 = ads.length > 1 ? ads[(currentIndex + 1) % ads.length] : null;
 
-  // Reusable Ad Card Component to keep the code clean
+  // Reusable Ad Card Component updated for perfect mobile ratios
   const AdCard = ({ ad }: { ad: AdCampaign }) => (
     <div className="relative w-full bg-slate-900 border border-slate-800 rounded-xl shadow-xl flex flex-col sm:flex-row group overflow-hidden h-auto sm:h-40 lg:h-44 transition-all hover:border-slate-700 hover:shadow-2xl">
-      {/* Ad Badge */}
+      {/* Badge */}
       <div className="absolute top-0 right-0 bg-slate-950/90 backdrop-blur-md text-slate-400 text-[9px] uppercase font-bold tracking-wider px-2 py-1 rounded-bl-lg z-20 flex items-center gap-1 border-b border-l border-slate-800">
         {ad.badge}
         <Info className="w-2.5 h-2.5 ml-0.5" />
       </div>
 
-      {/* Close Banner Button (Closes entire banner track) */}
+      {/* Close Button */}
       <button
         onClick={() => setIsVisible(false)}
         className="absolute top-1.5 left-1.5 z-20 bg-black/50 hover:bg-black/90 text-white p-1 rounded-full backdrop-blur-md transition-all border border-white/10"
@@ -157,8 +158,8 @@ export default function TopAdBanner() {
         <X className="w-3 h-3" />
       </button>
 
-      {/* Left: Ad Image */}
-      <div className="sm:w-[35%] h-32 sm:h-full relative overflow-hidden bg-slate-950 border-b sm:border-b-0 sm:border-r border-slate-800 shrink-0">
+      {/* Image Section - Adjusted for mobile single-row height */}
+      <div className="w-full h-36 sm:w-[35%] sm:h-full relative overflow-hidden bg-slate-950 border-b sm:border-b-0 sm:border-r border-slate-800 shrink-0">
         <Image
           src={ad.imageUrl}
           alt={ad.title}
@@ -172,12 +173,12 @@ export default function TopAdBanner() {
         />
       </div>
 
-      {/* Right: Ad Content */}
-      <div className="sm:w-[65%] p-4 lg:p-5 flex flex-col justify-center relative bg-gradient-to-br from-slate-900 to-slate-950">
+      {/* Content Section */}
+      <div className="w-full sm:w-[65%] p-4 lg:p-5 flex flex-col justify-center relative bg-gradient-to-br from-slate-900 to-slate-950">
         <h3 className="text-sm lg:text-base font-bold text-slate-100 mb-1.5 leading-snug pr-8 line-clamp-2">
           {ad.title}
         </h3>
-        <p className="text-slate-400 text-xs lg:text-sm mb-3 line-clamp-2 leading-relaxed">
+        <p className="text-slate-400 text-xs lg:text-sm mb-4 sm:mb-3 line-clamp-2 sm:line-clamp-2 leading-relaxed">
           {ad.description}
         </p>
 
@@ -202,15 +203,27 @@ export default function TopAdBanner() {
 
   return (
     <div className="w-full mb-8 flex flex-col">
-      {/* 1. VISUAL DISPLAY AD GRID */}
+      {/* 
+        GRID LOGIC UPDATE:
+        - Mobile: grid-cols-1 (Only the first child renders because the second child is wrapped in `hidden lg:block`)
+        - Desktop: lg:grid-cols-2 (Both render side-by-side)
+      */}
       <div
         className={`w-full grid grid-cols-1 ${ad2 ? "lg:grid-cols-2" : ""} gap-4 lg:gap-6 transition-all duration-500 ease-in-out ${fadeState} will-change-transform`}
       >
-        <AdCard ad={ad1} />
-        {ad2 && <AdCard ad={ad2} />}
+        <div className="w-full">
+          <AdCard ad={ad1} />
+        </div>
+
+        {/* Hide the second ad slot completely on anything smaller than desktop breakpoints */}
+        {ad2 && (
+          <div className="hidden lg:block w-full">
+            <AdCard ad={ad2} />
+          </div>
+        )}
       </div>
 
-      {/* 2. ADMIN TOGGLE */}
+      {/* ADMIN TOGGLE */}
       <div className="w-full mt-3 flex justify-end">
         <button
           onClick={() => setIsFormOpen(!isFormOpen)}
@@ -221,9 +234,10 @@ export default function TopAdBanner() {
         </button>
       </div>
 
-      {/* 3. ADMIN FORM DRAWER */}
+      {/* ADMIN FORM DRAWER */}
       {isFormOpen && (
         <div className="w-full mt-3 bg-slate-900/80 backdrop-blur border border-slate-800 rounded-xl p-5 shadow-2xl animate-in slide-in-from-top-4 fade-in duration-300">
+          {/* ... Rest of your form exactly as it was ... */}
           <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-800">
             <Sparkles className="w-4 h-4 text-blue-400" />
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
@@ -250,7 +264,6 @@ export default function TopAdBanner() {
                 />
               </div>
             </div>
-
             <div>
               <label className="block text-slate-400 font-semibold mb-1 uppercase tracking-tight text-[10px]">
                 Headline
@@ -263,7 +276,6 @@ export default function TopAdBanner() {
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-blue-500 transition-colors"
               />
             </div>
-
             <div>
               <label className="block text-slate-400 font-semibold mb-1 uppercase tracking-tight text-[10px]">
                 Badge Text
@@ -276,7 +288,6 @@ export default function TopAdBanner() {
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-blue-500 transition-colors"
               />
             </div>
-
             <div className="md:col-span-2">
               <label className="block text-slate-400 font-semibold mb-1 uppercase tracking-tight text-[10px]">
                 Description
@@ -289,7 +300,6 @@ export default function TopAdBanner() {
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-blue-500 transition-colors resize-none"
               />
             </div>
-
             <div>
               <label className="block text-slate-400 font-semibold mb-1 uppercase tracking-tight text-[10px]">
                 Button Text
@@ -301,7 +311,6 @@ export default function TopAdBanner() {
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-blue-500 transition-colors"
               />
             </div>
-
             <div>
               <label className="block text-slate-400 font-semibold mb-1 uppercase tracking-tight text-[10px]">
                 Destination Link
@@ -313,7 +322,6 @@ export default function TopAdBanner() {
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 outline-none focus:border-blue-500 transition-colors"
               />
             </div>
-
             <div className="md:col-span-2 pt-1">
               <button
                 type="submit"
