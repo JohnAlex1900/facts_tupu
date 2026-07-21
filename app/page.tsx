@@ -1,3 +1,4 @@
+import PartnershipMarquee from "@/components/PartnershipMarquee";
 import Link from "next/link";
 
 export default function LandingPage() {
@@ -164,6 +165,8 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
+
+      <PartnershipMarquee />
 
       {/* FOOTER */}
       <footer className="border-t border-slate-900 bg-slate-950/40 py-6 px-4 text-center text-[10px] font-mono text-slate-600">

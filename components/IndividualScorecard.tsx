@@ -10,12 +10,12 @@ interface Challenger {
   ai_feasibility_score: number;
 }
 
-// NEW: AI Deep Dive Interfaces
 interface AICorePriority {
   id: string;
   title: string;
 }
 
+// UPDATED: Aligned perfectly with backend AI Monitor schema
 interface AIDeepDiveMonitor {
   action_plan_practicality: number;
   unrealistic_promises_risk: number;
@@ -24,8 +24,10 @@ interface AIDeepDiveMonitor {
     vulnerability_index: number;
     performance_score: number;
   };
+  office_mandate: string;
   talk_vs_action_justification: string[];
-  delivery_score_justification: string[];
+  legislative_delivery_justification: string[];
+  developmental_delivery_justification: string[];
   risk_level_justification: string[];
 }
 
@@ -39,7 +41,7 @@ interface Profile {
   impact_rating: number;
   rvs: number;
   challengers: Challenger[];
-  ai_monitor_data?: AIDeepDiveMonitor; // NEW: Appended AI backend data
+  ai_monitor_data?: AIDeepDiveMonitor;
 }
 
 interface IndividualScorecardProps {
@@ -51,12 +53,11 @@ export default function IndividualScorecard({
   leader,
   onBack,
 }: IndividualScorecardProps) {
-  // State to manage which detailed AI metric is currently being viewed
   const [activeMetricTab, setActiveMetricTab] = useState<
     "talk" | "delivery" | "risk"
   >("talk");
 
-  // Fallback mock data structure in case the backend hasn't populated this leader's AI monitor yet
+  // Updated fallback structure containing the newly added mandate and dual delivery tracks
   const aiMonitor: AIDeepDiveMonitor = leader.ai_monitor_data || {
     action_plan_practicality: 88,
     unrealistic_promises_risk: 30,
@@ -69,14 +70,20 @@ export default function IndividualScorecard({
       vulnerability_index: 50,
       performance_score: 60,
     },
+    office_mandate:
+      "Responsible for managing regional budget allocations, executing statutory leadership oversight, and implementing localized development initiatives within their administrative jurisdiction.",
     talk_vs_action_justification: [
       "Exaggerated project kickoff timelines for infrastructure expansions by 14 months.",
       "7 explicit political platform public claims flagged with 'No Direct Ground Evidence'.",
       "Maintained higher relative media mentions compared to physical active work deployments.",
     ],
-    delivery_score_justification: [
-      "Successfully delivered 3 primary health facilities within county budget guidelines.",
-      "Allocated funds perfectly match visible projects for rural access roadway upgrades.",
+    legislative_delivery_justification: [
+      "Sponsored structural motions regarding development plan policy compliance frameworks.",
+      "Maintains standard baseline attendance data across regional assembly committee sessions.",
+    ],
+    developmental_delivery_justification: [
+      "Successfully delivered 3 primary health facilities within local budget guidelines.",
+      "Allocated funds match visible projects for rural access roadway upgrades.",
     ],
     risk_level_justification: [
       "Missed target milestones on structural audit reporting transparency parameters.",
@@ -104,67 +111,77 @@ export default function IndividualScorecard({
 
       <div className="p-6 md:p-10 space-y-8">
         {/* LEADER MAIN IDENTITY BLOCK */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-slate-950 p-6 rounded-xl border border-slate-800/60 shadow-inner">
-          <div>
-            <span className="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 uppercase tracking-wider mb-2">
-              Current Leader ({leader.seat_layer})
-            </span>
-            <h2 className="text-2xl font-black text-white tracking-tight">
-              {leader.name}
-            </h2>
-            <p className="text-sm text-emerald-400 font-medium mt-0.5">
-              {leader.role} &bull;{" "}
-              <span className="text-slate-400">{leader.county} County</span>
-            </p>
+        <div className="flex flex-col gap-5 bg-slate-950 p-6 rounded-xl border border-slate-800/60 shadow-inner">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+              <span className="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 uppercase tracking-wider mb-2">
+                Current Leader ({leader.seat_layer})
+              </span>
+              <h2 className="text-2xl font-black text-white tracking-tight">
+                {leader.name}
+              </h2>
+              <p className="text-sm text-emerald-400 font-medium mt-0.5">
+                {leader.role} &bull;{" "}
+                <span className="text-slate-400">{leader.county} County</span>
+              </p>
+            </div>
+
+            {/* INTERACTIVE PRIMARY METRICS SUMMARY */}
+            <div className="w-full md:w-auto flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800 min-w-0 sm:min-w-[280px] md:min-w-[320px] justify-between">
+              <button
+                onClick={() => setActiveMetricTab("talk")}
+                className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
+                  activeMetricTab === "talk"
+                    ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
+                    : "hover:bg-slate-800/50 border border-transparent"
+                }`}
+              >
+                <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
+                  Talk vs Action
+                </span>
+                <span className="block mt-0.5 font-mono text-lg font-black text-amber-400">
+                  {leader.jaba_meter}%
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveMetricTab("delivery")}
+                className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
+                  activeMetricTab === "delivery"
+                    ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
+                    : "hover:bg-slate-800/50 border border-transparent"
+                }`}
+              >
+                <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
+                  Delivery Score
+                </span>
+                <span className="block mt-0.5 font-mono text-lg font-black text-cyan-400">
+                  {leader.impact_rating}
+                </span>
+              </button>
+              <button
+                onClick={() => setActiveMetricTab("risk")}
+                className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
+                  activeMetricTab === "risk"
+                    ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
+                    : "hover:bg-slate-800/50 border border-transparent"
+                }`}
+              >
+                <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
+                  Risk Level
+                </span>
+                <span className="block mt-0.5 font-mono text-lg font-black text-rose-400">
+                  {leader.rvs}
+                </span>
+              </button>
+            </div>
           </div>
 
-          {/* INTERACTIVE PRIMARY METRICS SUMMARY */}
-          <div className="w-full md:w-auto flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800 min-w-0 sm:min-w-[280px] md:min-w-[320px] justify-between">
-            <button
-              onClick={() => setActiveMetricTab("talk")}
-              className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
-                activeMetricTab === "talk"
-                  ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
-                  : "hover:bg-slate-800/50 border border-transparent"
-              }`}
-            >
-              <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
-                Talk vs Action
-              </span>
-              <span className="block mt-0.5 font-mono text-lg font-black text-amber-400">
-                {leader.jaba_meter}%
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveMetricTab("delivery")}
-              className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
-                activeMetricTab === "delivery"
-                  ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
-                  : "hover:bg-slate-800/50 border border-transparent"
-              }`}
-            >
-              <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
-                Delivery Score
-              </span>
-              <span className="block mt-0.5 font-mono text-lg font-black text-cyan-400">
-                {leader.impact_rating}
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveMetricTab("risk")}
-              className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
-                activeMetricTab === "risk"
-                  ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
-                  : "hover:bg-slate-800/50 border border-transparent"
-              }`}
-            >
-              <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
-                Risk Level
-              </span>
-              <span className="block mt-0.5 font-mono text-lg font-black text-rose-400">
-                {leader.rvs}
-              </span>
-            </button>
+          {/* NEW: Office Mandate Box */}
+          <div className="pt-4 border-t border-slate-900 text-xs text-slate-400 leading-relaxed bg-slate-900/30 p-3 rounded-lg border border-slate-800/50">
+            <span className="font-extrabold uppercase text-[10px] tracking-wider text-slate-500 block mb-1">
+              ⚖️ Official Mandate Statement
+            </span>
+            {aiMonitor.office_mandate}
           </div>
         </div>
 
@@ -206,26 +223,53 @@ export default function IndividualScorecard({
                 </div>
               )}
 
+              {/* NEW: Dual Track Delivery Split View */}
               {activeMetricTab === "delivery" && (
-                <div className="animate-fadeIn">
-                  <span className="font-bold text-cyan-400 text-xs block mb-1">
-                    🏗️ Delivery Score
-                  </span>
-                  <p className="text-xs text-slate-400 leading-relaxed italic mb-4">
-                    Calculated straight from real infrastructure projects,
-                    budget spending, and public services successfully completed
-                    within their area.
-                  </p>
-                  <div className="space-y-3">
-                    {aiMonitor.delivery_score_justification.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="flex gap-2.5 items-start text-xs text-slate-300 bg-slate-900/50 p-3 rounded-lg border border-slate-800"
-                      >
-                        <span className="text-cyan-400 mt-0.5">✓</span>
-                        <span className="leading-relaxed">{item}</span>
-                      </div>
-                    ))}
+                <div className="animate-fadeIn space-y-5">
+                  <div>
+                    <span className="font-bold text-cyan-400 text-xs block mb-1">
+                      🏗️ Developmental Track Justification
+                    </span>
+                    <p className="text-[11px] text-slate-500 italic mb-2">
+                      Physical structures completed, machinery commissioned, and
+                      project funding execution files.
+                    </p>
+                    <div className="space-y-2">
+                      {aiMonitor.developmental_delivery_justification.map(
+                        (item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex gap-2.5 items-start text-xs text-slate-300 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"
+                          >
+                            <span className="text-cyan-400 mt-0.5">✓</span>
+                            <span className="leading-relaxed">{item}</span>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="font-bold text-teal-400 text-xs block mb-1">
+                      📜 Legislative & Oversight Track Justification
+                    </span>
+                    <p className="text-[11px] text-slate-500 italic mb-2">
+                      Attendance data, committee output performance indices, and
+                      structural policy regularizations submitted.
+                    </p>
+                    <div className="space-y-2">
+                      {aiMonitor.legislative_delivery_justification.map(
+                        (item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex gap-2.5 items-start text-xs text-slate-300 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"
+                          >
+                            <span className="text-teal-400 mt-0.5">⚖️</span>
+                            <span className="leading-relaxed">{item}</span>
+                          </div>
+                        ),
+                      )}
+                    </div>
                   </div>
                 </div>
               )}

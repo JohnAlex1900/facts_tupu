@@ -8,6 +8,7 @@ import ChallengerWorkspace from "@/components/ChallengerWorkspace";
 import IndividualScorecard from "@/components/IndividualScorecard";
 import { useRouter } from "next/navigation";
 import AIMonitorSector from "@/components/AIMonitorSector";
+import TopAdBanner from "@/components/TopAdBanner";
 
 interface Challenger {
   challenger_id: string;
@@ -16,6 +17,27 @@ interface Challenger {
   party_affiliation: string;
   ai_feasibility_score: number;
   manifesto_pillars?: string[];
+}
+
+// NEW: Added missing AI Deep Dive interfaces to pass safely to the Scorecard
+interface AICorePriority {
+  id: string;
+  title: string;
+}
+
+interface AIDeepDiveMonitor {
+  action_plan_practicality: number;
+  unrealistic_promises_risk: number;
+  core_priorities: AICorePriority[];
+  leadership_matchup: {
+    vulnerability_index: number;
+    performance_score: number;
+  };
+  office_mandate: string;
+  talk_vs_action_justification: string[];
+  legislative_delivery_justification: string[];
+  developmental_delivery_justification: string[];
+  risk_level_justification: string[];
 }
 
 interface ChallengerWorkspaceSession {
@@ -35,6 +57,7 @@ interface Profile {
   impact_rating: number;
   rvs: number;
   challengers: Challenger[];
+  ai_monitor_data?: AIDeepDiveMonitor; // NEW: Wired to backend schema updates
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -143,7 +166,7 @@ export default function PublicDashboard() {
     );
   }
 
-  // FIXES BREAKAGE SHOWN IN image_d8cdc5.png (VERTICAL OVERFLOW SCROLL FOR SCORECARD ON MOBILE)
+  // INDIVIDUAL SCORECARD VIEW
   if (currentView === "SCORECARD" && selectedLeader) {
     return (
       <div className="min-h-screen bg-slate-950 p-4 md:p-12 flex flex-col items-center justify-start overflow-y-auto md:justify-center py-8">
@@ -165,6 +188,8 @@ export default function PublicDashboard() {
       <InterceptorModal
         onNavigateToOnboarding={() => setCurrentView("ONBOARDING")}
       />
+
+      {currentView === "DASHBOARD" && <TopAdBanner />}
 
       {/* HEADER SECTION - FLUID INTERFACE BREAKPOINTS */}
       <header className="mb-8 md:mb-12 flex flex-col justify-between gap-6 border-b border-slate-900 pb-6 md:pb-8 md:flex-row md:items-center">
@@ -335,16 +360,18 @@ export default function PublicDashboard() {
                       <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-tight line-clamp-1">
                         Delivery Score
                       </div>
+                      {/* UPDATED: Appended strict % formatting to match API payload intent */}
                       <div className="mt-1 font-mono font-bold text-cyan-400 text-xs sm:text-sm">
-                        {leader.impact_rating}
+                        {leader.impact_rating}%
                       </div>
                     </div>
                     <div>
                       <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-tight line-clamp-1">
                         Risk Level
                       </div>
+                      {/* UPDATED: Appended strict % formatting to match API payload intent */}
                       <div className="mt-1 font-mono font-bold text-rose-400 text-xs sm:text-sm">
-                        {leader.rvs}
+                        {leader.rvs}%
                       </div>
                     </div>
                   </div>
@@ -428,14 +455,12 @@ export default function PublicDashboard() {
                           </span>
                         </div>
                         <div>
+                          {/* UPDATED: Fixed mathematical display error on traction velocity */}
                           <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
-                            Traction Index
+                            Traction Velocity
                           </span>
                           <span className="block text-sm font-bold text-slate-300 font-mono mt-0.5">
-                            {(challenger.public_traction_velocity * 10).toFixed(
-                              1,
-                            )}
-                            /10
+                            +{challenger.public_traction_velocity}%
                           </span>
                         </div>
                         <div className="col-span-2 mt-2">
