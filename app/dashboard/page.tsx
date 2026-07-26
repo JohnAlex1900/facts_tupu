@@ -63,7 +63,13 @@ interface Profile {
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function PublicDashboard() {
-  const { lookupCount, maxQuota, accountTier, registerLookup } = useQuota();
+  const {
+    lookupCount,
+    maxQuota,
+    accountTier,
+    registerLookup,
+    resetQuotaAfterPayment,
+  } = useQuota();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");

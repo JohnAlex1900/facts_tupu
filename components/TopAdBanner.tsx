@@ -224,7 +224,7 @@ export default function TopAdBanner() {
       </div>
 
       {/* ADMIN TOGGLE */}
-      <div className="w-full mt-3 flex justify-end">
+      {/* <div className="w-full mt-3 flex justify-end">
         <button
           onClick={() => setIsFormOpen(!isFormOpen)}
           className="flex items-center gap-1.5 text-[9px] lg:text-[10px] font-bold text-slate-500 hover:text-blue-400 tracking-wider transition-colors uppercase"
@@ -232,7 +232,7 @@ export default function TopAdBanner() {
           <PlusCircle className="w-3.5 h-3.5" />
           {isFormOpen ? "Close Ad Manager" : "Admin: Add Display Ad"}
         </button>
-      </div>
+      </div> */}
 
       {/* ADMIN FORM DRAWER */}
       {isFormOpen && (
