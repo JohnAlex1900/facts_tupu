@@ -41,7 +41,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight max-w-3xl">
-          Uncompromising Accountability For{" "}
+          FACTS TUPU. Accountability For{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
             Every Elected Seat.
           </span>
