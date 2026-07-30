@@ -4,16 +4,22 @@ import Link from "next/link";
 export default function TermsAndConditions() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-300 py-12 px-4 sm:px-6 lg:px-8 selection:bg-emerald-500/30">
-      <div className="max-w-4xl mx-auto">
-        {/* Navigation / Back Button */}
-        <div className="mb-8">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Navigation Bar */}
+        <nav className="flex items-center justify-between mb-8 pb-4 border-b border-slate-800/60">
+          <Link
+            href="/"
+            className="text-base font-black tracking-widest text-emerald-400 hover:text-emerald-300 transition-colors uppercase"
+          >
+            FACTS TUPU
+          </Link>
           <Link
             href="/dashboard"
-            className="inline-flex items-center text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+            className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-emerald-400 transition-colors"
           >
             ← Back to Dashboard
           </Link>
-        </div>
+        </nav>
 
         {/* Page Header */}
         <header className="mb-12 border-b border-slate-800 pb-8">

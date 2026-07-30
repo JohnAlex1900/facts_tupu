@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import SocialInsultsMonitor from "@/components/SocialInsultsMonitor";
 
 interface RepresentativeAnalysisCard {
   id: string;
@@ -15,11 +16,14 @@ interface RepresentativeAnalysisCard {
   sentiment_label: "STABLE" | "SPIKING" | "CRITICAL_SITUATION";
 }
 
+interface AIMonitorSectorProps {
+  searchQuery: string;
+}
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export default function AIMonitorSector() {
+export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
   const [profiles, setProfiles] = useState<RepresentativeAnalysisCard[]>([]);
-  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,14 +35,14 @@ export default function AIMonitorSector() {
   // Core execution link mapping queries to state handlers
   const loadIntelligenceGrid = async (
     pageNum: number,
-    searchQuery: string,
+    currentSearchQuery: string,
     replaceItems = false,
   ) => {
     if (replaceItems) setIsLoading(true);
     else setIsAppending(true);
 
     try {
-      const url = `${API_BASE_URL}/api/v1/monitor/representatives?page=${pageNum}&limit=6&search=${encodeURIComponent(searchQuery)}`;
+      const url = `${API_BASE_URL}/api/v1/monitor/representatives?page=${pageNum}&limit=6&search=${encodeURIComponent(currentSearchQuery)}`;
       const res = await fetch(url, {
         headers: {
           "ngrok-skip-browser-warning": "true",
@@ -81,16 +85,16 @@ export default function AIMonitorSector() {
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       setPage(1);
-      loadIntelligenceGrid(1, search, true);
+      loadIntelligenceGrid(1, searchQuery, true);
     }, 400);
 
     return () => clearTimeout(delayDebounce);
-  }, [search]);
+  }, [searchQuery]);
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    loadIntelligenceGrid(nextPage, search, false);
+    loadIntelligenceGrid(nextPage, searchQuery, false);
   };
 
   const getSentimentBadge = (label: string) => {
@@ -106,36 +110,6 @@ export default function AIMonitorSector() {
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* ACTIONS SUB-HEADER & REAL-TIME SEARCH FIELD */}
-      <div className="bg-gradient-to-r from-emerald-950/20 to-slate-950/50 border border-emerald-900/30 p-4 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4">
-        <div className="space-y-0.5">
-          <span className="text-base sm:text-[10px] font-extrabold tracking-widest text-emerald-400 uppercase block">
-            Leader Analysis Panel
-          </span>
-          <p className="text-xs text-slate-300 font-medium">
-            Live evaluation matrices constructed continuously
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative w-full md:w-64">
-            <input
-              type="text"
-              placeholder="Search leader or location..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-850 focus:border-cyan-500 text-xs text-slate-200 pl-3 pr-8 py-1.5 rounded-lg outline-none transition-colors"
-            />
-            <span className="absolute right-2.5 top-2 text-slate-500 text-sm sm:text-[10px] select-none">
-              🔍
-            </span>
-          </div>
-          <span className="hidden sm:inline-block text-sm sm:text-[10px] font-mono bg-slate-950 px-2.5 py-1.5 border border-slate-800 text-slate-400 rounded-lg whitespace-nowrap">
-            System: Active 2026 Tracker
-          </span>
-        </div>
-      </div>
-
       {/* REFRESH/LOAD SKELETON PLACEHOLDER GRID */}
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -261,10 +235,10 @@ export default function AIMonitorSector() {
       {/* INSPECTION DETAILED OVERLAY MODAL */}
       {selectedLeader && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
             <button
               onClick={() => setSelectedLeader(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors text-base font-mono"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors text-base font-mono z-10"
             >
               ✕
             </button>
@@ -293,6 +267,7 @@ export default function AIMonitorSector() {
             </div>
 
             <div className="space-y-4">
+              {/* DEEP INTELLIGENCE METRIC ASSESSMENT */}
               <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
                 <h4 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
                   Deep Intelligence Metric Assessment
@@ -309,6 +284,13 @@ export default function AIMonitorSector() {
                 </ul>
               </div>
 
+              {/* REAL-TIME SOCIAL MEDIA MONITORING */}
+              <SocialInsultsMonitor
+                leaderName={selectedLeader.full_name}
+                leaderRole={selectedLeader.target_role}
+              />
+
+              {/* SEARCH FOOTPRINT WEIGHT SCALE */}
               <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
                 <div className="flex justify-between text-xs font-bold mb-2">
                   <span className="text-slate-400">
