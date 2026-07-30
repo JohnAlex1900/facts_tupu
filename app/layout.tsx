@@ -22,6 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-slate-950 text-slate-50 antialiased">
       <body>
+        <head>
+          <script
+            defer
+            src="https://cloud.umami.is/script.js"
+            data-website-id="d97f58c6-b286-4614-879d-b688694dfaa3"
+          ></script>
+        </head>
         <Providers>
           <QuotaProvider>{children}</QuotaProvider>
         </Providers>

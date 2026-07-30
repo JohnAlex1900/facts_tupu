@@ -82,7 +82,7 @@ export default function LandingPage() {
               Tracked Leaders
             </span>
             <span className="text-2xl font-extrabold font-mono text-white mt-1 block">
-              349 / 349
+              2638 / 2638
             </span>
           </div>
           <div className="p-4 md:border-r border-slate-900 last:border-0">
