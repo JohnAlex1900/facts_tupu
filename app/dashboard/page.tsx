@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -19,7 +20,6 @@ interface Challenger {
   manifesto_pillars?: string[];
 }
 
-// NEW: Added missing AI Deep Dive interfaces to pass safely to the Scorecard
 interface AICorePriority {
   id: string;
   title: string;
@@ -57,7 +57,7 @@ interface Profile {
   impact_rating: number;
   rvs: number;
   challengers: Challenger[];
-  ai_monitor_data?: AIDeepDiveMonitor; // NEW: Wired to backend schema updates
+  ai_monitor_data?: AIDeepDiveMonitor;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -81,6 +81,9 @@ export default function PublicDashboard() {
     "feed" | "ai-monitor" | "challengers"
   >("feed");
 
+  // Lazy-loading tracker: ensures AI components aren't loaded until visited once
+  const [hasVisitedAiMonitor, setHasVisitedAiMonitor] = useState(false);
+
   const [challengerSession, setChallengerSession] =
     useState<ChallengerWorkspaceSession | null>(null);
 
@@ -88,6 +91,13 @@ export default function PublicDashboard() {
     "DASHBOARD" | "ONBOARDING" | "CHALLENGER_WORKSPACE" | "SCORECARD"
   >("DASHBOARD");
   const [selectedLeader, setSelectedLeader] = useState<Profile | null>(null);
+
+  // Track tab visits to trigger lazy loading
+  useEffect(() => {
+    if (activeTab === "ai-monitor" && !hasVisitedAiMonitor) {
+      setHasVisitedAiMonitor(true);
+    }
+  }, [activeTab, hasVisitedAiMonitor]);
 
   useEffect(() => {
     async function loadProfiles() {
@@ -109,7 +119,7 @@ export default function PublicDashboard() {
   }, []);
 
   const handleOpenScorecard = (leader: Profile) => {
-    registerLookup(leader.id); // Register the lookup for quota tracking
+    registerLookup(leader.id);
     const lookupPermitted =
       accountTier !== "anonymous" || lookupCount < maxQuota;
     if (lookupPermitted) {
@@ -197,8 +207,8 @@ export default function PublicDashboard() {
 
       {currentView === "DASHBOARD" && <TopAdBanner />}
 
-      {/* HEADER SECTION - FLUID INTERFACE BREAKPOINTS */}
-      <header className="mb-8 md:mb-12 flex flex-col justify-between gap-6 border-b border-slate-900 pb-6 md:pb-8 md:flex-row md:items-center">
+      {/* HEADER SECTION */}
+      <header className="mb-6 md:mb-8 flex flex-col justify-between gap-6 border-b border-slate-900 pb-6 md:pb-8 md:flex-row md:items-center">
         <div>
           <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">
             Facts Tupu
@@ -209,7 +219,7 @@ export default function PublicDashboard() {
           </p>
         </div>
 
-        {/* FULLY RESPONSIVE DYNAMIC QUOTA BLOCK */}
+        {/* DYNAMIC QUOTA BLOCK */}
         <div className="rounded-xl border border-slate-900 bg-slate-900/40 p-4 shadow-xl w-full md:w-auto md:min-w-[280px]">
           <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
             <span>
@@ -255,74 +265,76 @@ export default function PublicDashboard() {
         </div>
       </header>
 
-      {/* RESPONSIVE FILTER DECK */}
-      <section className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between bg-slate-900/20 p-3 rounded-xl border border-slate-900/60">
-        <div className="relative w-full lg:max-w-md">
-          <input
-            type="text"
-            placeholder="Search by leader name, county, or position..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition focus:border-emerald-500"
-          />
-        </div>
+      {/* STICKY CONTROL & NAVIGATION HEADER */}
+      <div className="sticky top-0 z-30 bg-slate-950/90 backdrop-blur-md pt-2 pb-1 -mx-4 px-4 sm:-mx-6 sm:px-6 md:-mx-12 md:px-12 border-b border-slate-900/80 mb-6 shadow-2xl transition-all">
+        {/* FILTER DECK */}
+        <section className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 shadow-md">
+          <div className="relative w-full lg:max-w-md">
+            <input
+              type="text"
+              placeholder="Search by leader name, county, or position..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-lg border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition focus:border-emerald-500"
+            />
+          </div>
 
-        {/* SCROLLABLE BOUNDARY LAYER BUTTONS ON MOBILE */}
-        <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-900 overflow-x-auto scrollbar-none max-w-full">
-          {["ALL", "COUNTY", "CONSTITUENCY", "WARD"].map((layer) => (
-            <button
-              key={layer}
-              onClick={() => setActiveLayer(layer)}
-              className={`rounded px-3 py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition whitespace-nowrap flex-1 text-center ${
-                activeLayer === layer
-                  ? "bg-emerald-500 text-slate-950 shadow-md"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              {layer}
-            </button>
-          ))}
-        </div>
-      </section>
+          <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-900 overflow-x-auto scrollbar-none max-w-full">
+            {["ALL", "COUNTY", "CONSTITUENCY", "WARD"].map((layer) => (
+              <button
+                key={layer}
+                onClick={() => setActiveLayer(layer)}
+                className={`rounded px-3 py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider transition whitespace-nowrap flex-1 text-center ${
+                  activeLayer === layer
+                    ? "bg-emerald-500 text-slate-950 shadow-md"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {layer}
+              </button>
+            ))}
+          </div>
+        </section>
 
-      {/* MOBILE SCROLL NAV-BAR */}
-      <nav className="mb-6 border-b border-slate-900 flex items-center gap-1 overflow-x-auto whitespace-nowrap scrollbar-none">
-        <button
-          onClick={() => setActiveTab("feed")}
-          className={`px-3 sm:px-4 py-3 text-[11px] sm:text-xs font-bold uppercase tracking-wider border-b-2 -mb-px transition-all ${
-            activeTab === "feed"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent text-slate-500 hover:text-slate-300"
-          }`}
-        >
-          📢 Representative Feed
-        </button>
-        <button
-          onClick={() => setActiveTab("ai-monitor")}
-          className={`px-3 sm:px-4 py-3 text-[11px] sm:text-xs font-bold uppercase tracking-wider border-b-2 -mb-px transition-all ${
-            activeTab === "ai-monitor"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent text-slate-500 hover:text-slate-300"
-          }`}
-        >
-          🤖 AI Progress Monitor
-        </button>
-        <button
-          onClick={() => setActiveTab("challengers")}
-          className={`px-3 sm:px-4 py-3 text-[11px] sm:text-xs font-bold uppercase tracking-wider border-b-2 -mb-px transition-all ${
-            activeTab === "challengers"
-              ? "border-emerald-500 text-emerald-400"
-              : "border-transparent text-slate-500 hover:text-slate-300"
-          }`}
-        >
-          👥 Challengers Hub
-        </button>
-      </nav>
+        {/* NAV-BAR TABS */}
+        <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap scrollbar-none">
+          <button
+            onClick={() => setActiveTab("feed")}
+            className={`px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border-b-2 -mb-px transition-all ${
+              activeTab === "feed"
+                ? "border-emerald-500 text-emerald-400"
+                : "border-transparent text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            📢 Representative Feed
+          </button>
+          <button
+            onClick={() => setActiveTab("ai-monitor")}
+            className={`px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border-b-2 -mb-px transition-all ${
+              activeTab === "ai-monitor"
+                ? "border-emerald-500 text-emerald-400"
+                : "border-transparent text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            🤖 AI Progress Monitor
+          </button>
+          <button
+            onClick={() => setActiveTab("challengers")}
+            className={`px-3 sm:px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider border-b-2 -mb-px transition-all ${
+              activeTab === "challengers"
+                ? "border-emerald-500 text-emerald-400"
+                : "border-transparent text-slate-500 hover:text-slate-300"
+            }`}
+          >
+            👥 Challengers Hub
+          </button>
+        </nav>
+      </div>
 
-      {/* ADAPTIVE GRIDS */}
+      {/* STATE-PERSISTENT CONTAINER SECTORS */}
       <main className="w-full">
         {/* FEED SECTOR */}
-        {activeTab === "feed" && (
+        <div className={activeTab === "feed" ? "block" : "hidden"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredProfiles.map((leader) => (
               <div
@@ -366,7 +378,6 @@ export default function PublicDashboard() {
                       <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-tight line-clamp-1">
                         Delivery Score
                       </div>
-                      {/* UPDATED: Appended strict % formatting to match API payload intent */}
                       <div className="mt-1 font-mono font-bold text-cyan-400 text-xs sm:text-sm">
                         {leader.impact_rating}%
                       </div>
@@ -375,7 +386,6 @@ export default function PublicDashboard() {
                       <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-tight line-clamp-1">
                         Risk Level
                       </div>
-                      {/* UPDATED: Appended strict % formatting to match API payload intent */}
                       <div className="mt-1 font-mono font-bold text-rose-400 text-xs sm:text-sm">
                         {leader.rvs}%
                       </div>
@@ -391,13 +401,17 @@ export default function PublicDashboard() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* PROGRESS SECTOR - Lazy mounted on first click, then persistent */}
+        {hasVisitedAiMonitor && (
+          <div className={activeTab === "ai-monitor" ? "block" : "hidden"}>
+            <AIMonitorSector />
+          </div>
         )}
 
-        {/* PROGRESS SECTOR */}
-        {activeTab === "ai-monitor" && <AIMonitorSector />}
-
         {/* CHALLENGERS SECTOR */}
-        {activeTab === "challengers" && (
+        <div className={activeTab === "challengers" ? "block" : "hidden"}>
           <div className="space-y-4">
             <div className="bg-cyan-950/20 border border-cyan-900/30 p-4 rounded-xl text-xs text-cyan-400 w-full max-w-3xl">
               👥 <strong>Aspirant Information Matrix:</strong> View
@@ -461,7 +475,6 @@ export default function PublicDashboard() {
                           </span>
                         </div>
                         <div>
-                          {/* UPDATED: Fixed mathematical display error on traction velocity */}
                           <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
                             Traction Velocity
                           </span>
@@ -488,7 +501,7 @@ export default function PublicDashboard() {
               </div>
             )}
           </div>
-        )}
+        </div>
       </main>
     </div>
   );

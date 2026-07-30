@@ -169,10 +169,23 @@ export default function LandingPage() {
       <PartnershipMarquee />
 
       {/* FOOTER */}
-      <footer className="border-t border-slate-900 bg-slate-950/40 py-6 px-4 text-center text-[10px] font-mono text-slate-600">
-        © {new Date().getFullYear()} facts tupu. Built to provide open
-        transparency and factual information on public leadership tracking
-        frameworks.
+      <footer className="border-t border-slate-900 bg-slate-950/40 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-center md:text-left text-[10px] font-mono text-slate-600 max-w-sm">
+            © {new Date().getFullYear()} facts tupu. Built to provide open
+            transparency and factual information on public leadership tracking
+            frameworks.
+          </p>
+
+          <nav className="flex items-center gap-6 text-xs font-bold tracking-wide uppercase text-slate-500">
+            <Link
+              href="/terms"
+              className="hover:text-emerald-400 transition-colors duration-200"
+            >
+              Terms & Conditions
+            </Link>
+          </nav>
+        </div>
       </footer>
     </div>
   );
