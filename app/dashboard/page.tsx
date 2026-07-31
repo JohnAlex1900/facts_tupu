@@ -114,6 +114,7 @@ export default function PublicDashboard() {
         });
         const data = await response.json();
         setProfiles(data);
+        resetQuotaAfterPayment(); // Reset quota after successful data fetch
       } catch (error) {
         console.error("Data Layer Connection Failure:", error);
       } finally {
