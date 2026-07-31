@@ -16,6 +16,18 @@ interface RepresentativeAnalysisCard {
   sentiment_label: "STABLE" | "SPIKING" | "CRITICAL_SITUATION";
 }
 
+// Added interface for Challengers
+interface ChallengerProfile {
+  id: string;
+  full_name: string;
+  target_role: string;
+  location_name: string;
+  party_affiliation: string;
+  analysis_points: string[];
+  traction_score: number;
+  sentiment_label: "STABLE" | "SPIKING" | "CRITICAL_SITUATION";
+}
+
 interface AIMonitorSectorProps {
   searchQuery: string;
 }
@@ -29,10 +41,13 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAppending, setIsAppending] = useState(false);
   const [error, setError] = useState("");
+
   const [selectedLeader, setSelectedLeader] =
     useState<RepresentativeAnalysisCard | null>(null);
+  // State to track if a user has drilled down into a specific challenger
+  const [selectedChallenger, setSelectedChallenger] =
+    useState<ChallengerProfile | null>(null);
 
-  // Core execution link mapping queries to state handlers
   const loadIntelligenceGrid = async (
     pageNum: number,
     currentSearchQuery: string,
@@ -62,7 +77,6 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
         setProfiles((prev) => [...prev, ...data]);
       }
 
-      // If less items arrive than the requested segment cap (6), we've exhausted records
       if (data.length < 6) {
         setHasMore(false);
       } else {
@@ -81,7 +95,6 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
     }
   };
 
-  // Debounced search watcher ensuring zero performance lags
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       setPage(1);
@@ -108,9 +121,33 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
     }
   };
 
+  // Helper to generate clean sample challenger sets based on the incumbent's data
+  const generateSampleChallengers = (
+    leader: RepresentativeAnalysisCard,
+  ): ChallengerProfile[] => {
+    return [1, 2, 3].map((num) => ({
+      id: `challenger-${leader.id}-${num}`,
+      full_name: `Challenger ${num}`,
+      target_role: leader.target_role,
+      location_name: leader.location_name,
+      party_affiliation: "Undeclared / Independent",
+      analysis_points: [
+        `AI detects growing grassroots mobilization in ${leader.location_name}.`,
+        `Increased search volume targeting incumbent's recent policy votes.`,
+        `Social media sentiment shifting towards active campaign tracking.`,
+      ],
+      traction_score: Math.floor(Math.random() * 45) + 15,
+      sentiment_label: num % 2 === 0 ? "SPIKING" : "STABLE",
+    }));
+  };
+
+  const closeModal = () => {
+    setSelectedLeader(null);
+    setSelectedChallenger(null);
+  };
+
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* REFRESH/LOAD SKELETON PLACEHOLDER GRID */}
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((n) => (
@@ -138,7 +175,6 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
         </div>
       ) : (
         <>
-          {/* RENDERING INTERACTIVE GRID SUMMARY CARDS */}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 w-full">
             {profiles.map((leader, idx) => (
               <div
@@ -215,7 +251,6 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
             ))}
           </div>
 
-          {/* INFINITE CHUNKING SEGMENT REVOLUTION CONTROLLER */}
           {hasMore && (
             <div className="flex justify-center pt-4">
               <button
@@ -237,86 +272,208 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
             <button
-              onClick={() => setSelectedLeader(null)}
+              onClick={closeModal}
               className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors text-base font-mono z-10"
             >
               ✕
             </button>
 
-            <div className="mb-5">
-              <div className="flex gap-2 mb-2">
-                <span className="text-[10px] uppercase font-bold bg-indigo-950/60 text-indigo-400 px-2 py-0.5 rounded border border-indigo-900 tracking-wider">
-                  {selectedLeader.type}
-                </span>
-                <span className="text-[10px] uppercase font-bold bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800 tracking-wider">
-                  {selectedLeader.target_role} •{" "}
-                  {selectedLeader.party_affiliation}
-                </span>
-                <span
-                  className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(selectedLeader.sentiment_label)}`}
-                >
-                  {selectedLeader.sentiment_label.replace("_", " ")}
-                </span>
-              </div>
-              <h2 className="text-xl font-black text-white tracking-tight">
-                {selectedLeader.full_name}
-              </h2>
-              <p className="text-xs text-emerald-400 font-semibold mt-0.5">
-                Jurisdiction Area: 📍 {selectedLeader.location_name}
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {/* DEEP INTELLIGENCE METRIC ASSESSMENT */}
-              <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
-                <h4 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
-                  Deep Intelligence Metric Assessment
-                </h4>
-                <ul className="space-y-3 text-xs text-slate-200 list-none leading-relaxed">
-                  {selectedLeader.analysis_points.map((point, index) => (
-                    <li key={index} className="flex items-start gap-2.5">
-                      <span className="text-cyan-400 select-none font-bold">
-                        ✓
-                      </span>
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* REAL-TIME SOCIAL MEDIA MONITORING */}
-              <SocialInsultsMonitor
-                leaderName={selectedLeader.full_name}
-                leaderRole={selectedLeader.target_role}
-              />
-
-              {/* SEARCH FOOTPRINT WEIGHT SCALE */}
-              <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
-                <div className="flex justify-between text-xs font-bold mb-2">
-                  <span className="text-slate-400">
-                    Search Footprint Weight Scale:
-                  </span>
-                  <span className="text-cyan-400 font-mono">
-                    {selectedLeader.traction_score}%
-                  </span>
+            {!selectedChallenger ? (
+              /* INCUMBENT REPRESENTATIVE VIEW */
+              <div className="animate-in fade-in duration-300">
+                <div className="mb-5">
+                  <div className="flex gap-2 mb-2">
+                    <span className="text-[10px] uppercase font-bold bg-indigo-950/60 text-indigo-400 px-2 py-0.5 rounded border border-indigo-900 tracking-wider">
+                      {selectedLeader.type}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800 tracking-wider">
+                      {selectedLeader.target_role} •{" "}
+                      {selectedLeader.party_affiliation}
+                    </span>
+                    <span
+                      className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(selectedLeader.sentiment_label)}`}
+                    >
+                      {selectedLeader.sentiment_label.replace("_", " ")}
+                    </span>
+                  </div>
+                  <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                    {selectedLeader.full_name}
+                    <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold uppercase">
+                      Incumbent
+                    </span>
+                  </h2>
+                  <p className="text-xs text-emerald-400 font-semibold mt-0.5">
+                    Jurisdiction Area: 📍 {selectedLeader.location_name}
+                  </p>
                 </div>
-                <div className="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
-                  <div
-                    className="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full transition-all duration-500"
-                    style={{ width: `${selectedLeader.traction_score}%` }}
+
+                <div className="space-y-4">
+                  <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
+                    <h4 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
+                      Deep Intelligence Metric Assessment
+                    </h4>
+                    <ul className="space-y-3 text-xs text-slate-200 list-none leading-relaxed">
+                      {selectedLeader.analysis_points.map((point, index) => (
+                        <li key={index} className="flex items-start gap-2.5">
+                          <span className="text-cyan-400 select-none font-bold">
+                            ✓
+                          </span>
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <SocialInsultsMonitor
+                    leaderName={selectedLeader.full_name}
+                    leaderRole={selectedLeader.target_role}
                   />
-                </div>
-                <div className="flex justify-between items-center mt-2 pt-0.5 text-sm sm:text-[9px] font-mono text-slate-500">
-                  <span>ID reference: {selectedLeader.id}</span>
-                  <span>
-                    Synced:{" "}
-                    {new Date(
-                      selectedLeader.last_audit_timestamp,
-                    ).toLocaleString()}
-                  </span>
+
+                  <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
+                    <div className="flex justify-between text-xs font-bold mb-2">
+                      <span className="text-slate-400">
+                        Search Footprint Weight Scale:
+                      </span>
+                      <span className="text-cyan-400 font-mono">
+                        {selectedLeader.traction_score}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                      <div
+                        className="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full transition-all duration-500"
+                        style={{ width: `${selectedLeader.traction_score}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* CHALLENGERS NESTED LIST SECTION */}
+                  <div className="mt-6 pt-5 border-t border-slate-800/80">
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-[11px] uppercase tracking-wider font-bold text-slate-300">
+                        Registered Challengers
+                      </h4>
+                      <span className="text-[10px] text-slate-500 font-mono">
+                        AI Monitored
+                      </span>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {generateSampleChallengers(selectedLeader).map(
+                        (challenger) => (
+                          <div
+                            key={challenger.id}
+                            onClick={() => setSelectedChallenger(challenger)}
+                            className="group cursor-pointer bg-slate-950/50 border border-slate-800 hover:border-cyan-800/80 hover:bg-slate-900 p-3.5 rounded-xl transition-all duration-200 flex flex-col justify-between"
+                          >
+                            <div>
+                              <div className="flex justify-between items-start mb-1.5">
+                                <span className="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors">
+                                  {challenger.full_name}
+                                </span>
+                                <span
+                                  className={`text-[8px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(challenger.sentiment_label)}`}
+                                >
+                                  {challenger.sentiment_label}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1.5 text-[9px] uppercase font-bold text-slate-400">
+                                <span>{challenger.target_role}</span>
+                                <span className="text-slate-600">•</span>
+                                <span className="text-emerald-500/80">
+                                  📍 {challenger.location_name}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="mt-3 flex items-center justify-between text-[10px]">
+                              <span className="text-slate-500">
+                                View AI Audit →
+                              </span>
+                            </div>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              /* CHALLENGER DEEP DIVE VIEW */
+              <div className="animate-in slide-in-from-right-4 fade-in duration-300">
+                <button
+                  onClick={() => setSelectedChallenger(null)}
+                  className="mb-5 flex items-center gap-1.5 text-xs font-bold text-cyan-500 hover:text-cyan-400 transition-colors bg-cyan-950/30 px-3 py-1.5 rounded-lg border border-cyan-900/50 w-fit"
+                >
+                  <span>←</span> Return to Incumbent {selectedLeader.full_name}
+                </button>
+
+                <div className="mb-5">
+                  <div className="flex gap-2 mb-2">
+                    <span className="text-[10px] uppercase font-bold bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800 tracking-wider">
+                      {selectedChallenger.target_role} •{" "}
+                      {selectedChallenger.party_affiliation}
+                    </span>
+                    <span
+                      className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(selectedChallenger.sentiment_label)}`}
+                    >
+                      {selectedChallenger.sentiment_label.replace("_", " ")}
+                    </span>
+                  </div>
+                  <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                    {selectedChallenger.full_name}
+                    <span className="text-[10px] bg-indigo-950/60 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-900 font-bold uppercase">
+                      Challenger Profile
+                    </span>
+                  </h2>
+                  <p className="text-xs text-emerald-400 font-semibold mt-0.5">
+                    Target Jurisdiction: 📍 {selectedChallenger.location_name}
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
+                    <h4 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
+                      Challenger Threat & Metric Assessment
+                    </h4>
+                    <ul className="space-y-3 text-xs text-slate-200 list-none leading-relaxed">
+                      {selectedChallenger.analysis_points.map(
+                        (point, index) => (
+                          <li key={index} className="flex items-start gap-2.5">
+                            <span className="text-cyan-400 select-none font-bold">
+                              ✓
+                            </span>
+                            <span>{point}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+
+                  <SocialInsultsMonitor
+                    leaderName={selectedChallenger.full_name}
+                    leaderRole={selectedChallenger.target_role}
+                  />
+
+                  <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
+                    <div className="flex justify-between text-xs font-bold mb-2">
+                      <span className="text-slate-400">
+                        Challenger Campaign Footprint:
+                      </span>
+                      <span className="text-cyan-400 font-mono">
+                        {selectedChallenger.traction_score}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                      <div
+                        className="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full transition-all duration-500"
+                        style={{
+                          width: `${selectedChallenger.traction_score}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
