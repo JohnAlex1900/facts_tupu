@@ -10,9 +10,6 @@ export default function LandingPage() {
           <span className="text-base sm:text-xl font-black tracking-tighter text-white">
             FACTS <span className="text-emerald-500">TUPU.</span>
           </span>
-          <span className="hidden sm:inline-flex text-[10px] bg-slate-900 text-slate-400 font-mono font-bold px-1.5 py-0.5 rounded border border-slate-800">
-            V1.0.0
-          </span>
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-xs font-bold tracking-wide uppercase text-slate-400">
