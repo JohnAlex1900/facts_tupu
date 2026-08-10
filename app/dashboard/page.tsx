@@ -56,6 +56,7 @@ interface Profile {
   role: string;
   jaba_meter: number;
   impact_rating: number;
+  party_affiliation: string;
   rvs: number;
   challengers: Challenger[];
   ai_monitor_data?: AIDeepDiveMonitor;
@@ -399,6 +400,12 @@ export default function PublicDashboard() {
                   </h3>
                   <p className="text-xs text-emerald-500 font-medium mt-0.5">
                     {leader.role}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-400 line-clamp-1">
+                    Party Affiliation:{" "}
+                    <span className="text-slate-300 font-semibold">
+                      {leader.party_affiliation}
+                    </span>
                   </p>
                   <p className="mt-1 text-xs text-slate-400 line-clamp-1">
                     Region Area:{" "}
