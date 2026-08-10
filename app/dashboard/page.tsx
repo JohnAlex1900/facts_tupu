@@ -122,7 +122,7 @@ export default function PublicDashboard() {
       }
     }
     loadProfiles();
-  }, []);
+  }, [resetQuotaAfterPayment]);
 
   const handleOpenScorecard = (leader: Profile) => {
     registerLookup(leader.id);
@@ -410,7 +410,7 @@ export default function PublicDashboard() {
                   <div className="mt-5 grid grid-cols-3 gap-1 border-t border-b border-slate-800/60 py-3 text-center">
                     <div>
                       <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-tight line-clamp-1">
-                        Talk vs Action
+                        Jaba Meter
                       </div>
                       <div className="mt-1 font-mono font-bold text-amber-400 text-xs sm:text-sm">
                         {leader.jaba_meter}%
@@ -418,7 +418,7 @@ export default function PublicDashboard() {
                     </div>
                     <div>
                       <div className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-tight line-clamp-1">
-                        Delivery Score
+                        Impact Rating
                       </div>
                       <div className="mt-1 font-mono font-bold text-cyan-400 text-xs sm:text-sm">
                         {leader.impact_rating}%
@@ -437,7 +437,7 @@ export default function PublicDashboard() {
 
                 <div className="mt-5 pt-1">
                   <span className="block text-center w-full rounded-lg bg-slate-800/80 py-2 text-xs font-bold text-slate-300 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200">
-                    Open Performance Scorecard →
+                    Open Framework Scorecard →
                   </span>
                 </div>
               </div>

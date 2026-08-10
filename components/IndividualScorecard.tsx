@@ -1,6 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+export interface RubricScore {
+  category_name: string;
+  weight: number;
+  score: number;
+  evidence_snippets: string[];
+  analysis_notes: string;
+}
+
+export interface RepresentativeEvaluation {
+  representative_id: string;
+  full_name: string;
+  role: string;
+  overall_score: number;
+  party_affiliation: string;
+  rubric_scores: RubricScore[];
+  summary_verdict: string;
+}
 
 interface Challenger {
   challenger_id: string;
@@ -15,7 +35,6 @@ interface AICorePriority {
   title: string;
 }
 
-// UPDATED: Aligned perfectly with backend AI Monitor schema
 interface AIDeepDiveMonitor {
   action_plan_practicality: number;
   unrealistic_promises_risk: number;
@@ -37,6 +56,7 @@ interface Profile {
   name: string;
   county: string;
   role: string;
+  party_affiliation: string;
   jaba_meter: number;
   impact_rating: number;
   rvs: number;
@@ -54,10 +74,52 @@ export default function IndividualScorecard({
   onBack,
 }: IndividualScorecardProps) {
   const [activeMetricTab, setActiveMetricTab] = useState<
-    "talk" | "delivery" | "risk"
-  >("talk");
+    "talk" | "delivery" | "rubric" | "risk"
+  >("rubric");
 
-  // Updated fallback structure containing the newly added mandate and dual delivery tracks
+  const [evaluation, setEvaluation] = useState<RepresentativeEvaluation | null>(
+    null,
+  );
+  const [evalLoading, setEvalLoading] = useState<boolean>(true);
+  const [evalError, setEvalError] = useState<string | null>(null);
+
+  // Fetch live constitutional evaluation matrix from engine_core API
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchEvaluation() {
+      try {
+        setEvalLoading(true);
+        const res = await fetch(
+          `${API_BASE_URL}/api/v1/analytics/evaluate/${leader.id}`,
+          {
+            headers: { "ngrok-skip-browser-warning": "true" },
+          },
+        );
+        if (!res.ok) {
+          throw new Error("Failed to load official evaluation framework data.");
+        }
+        const data: RepresentativeEvaluation = await res.json();
+        if (isMounted) {
+          setEvaluation(data);
+          setEvalError(null);
+        }
+      } catch (err: unknown) {
+        if (isMounted) {
+          setEvalError(
+            (err as Error).message || "Error connecting to evaluation engine.",
+          );
+        }
+      } finally {
+        if (isMounted) setEvalLoading(false);
+      }
+    }
+
+    fetchEvaluation();
+    return () => {
+      isMounted = false;
+    };
+  }, [leader.id]);
+
   const aiMonitor: AIDeepDiveMonitor = leader.ai_monitor_data || {
     action_plan_practicality: 88,
     unrealistic_promises_risk: 30,
@@ -66,30 +128,25 @@ export default function IndividualScorecard({
       { id: "02", title: "Digital Verification for Civic Services" },
       { id: "03", title: "Performance Standards for Local Projects" },
     ],
-    leadership_matchup: {
-      vulnerability_index: 50,
-      performance_score: 60,
-    },
+    leadership_matchup: { vulnerability_index: 50, performance_score: 60 },
     office_mandate:
-      "Responsible for managing regional budget allocations, executing statutory leadership oversight, and implementing localized development initiatives within their administrative jurisdiction.",
+      "Responsible for executing statutory leadership oversight, constitutional mandates, and managing regional resource allocations within their jurisdiction.",
     talk_vs_action_justification: [
-      "Exaggerated project kickoff timelines for infrastructure expansions by 14 months.",
-      "7 explicit political platform public claims flagged with 'No Direct Ground Evidence'.",
-      "Maintained higher relative media mentions compared to physical active work deployments.",
+      "Exaggerated project kickoff timelines for infrastructure expansions.",
+      "Public platform statements flagged with 'Unverified Ground Evidence'.",
     ],
     legislative_delivery_justification: [
-      "Sponsored structural motions regarding development plan policy compliance frameworks.",
-      "Maintains standard baseline attendance data across regional assembly committee sessions.",
+      "Sponsored structural policy compliance frameworks in plenary sessions.",
     ],
     developmental_delivery_justification: [
-      "Successfully delivered 3 primary health facilities within local budget guidelines.",
-      "Allocated funds match visible projects for rural access roadway upgrades.",
+      "Successfully delivered primary health facilities within budget.",
     ],
     risk_level_justification: [
-      "Missed target milestones on structural audit reporting transparency parameters.",
-      "Minor accounting ledger variance noticed across decentralized conditional allocations.",
+      "Audit disclosures flag pending transparency documentation.",
     ],
   };
+
+  const isPenalized = evaluation?.summary_verdict.includes("PENALIZED");
 
   return (
     <div className="w-full max-w-4xl rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-2xl animate-fadeIn">
@@ -98,14 +155,14 @@ export default function IndividualScorecard({
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
-            Facts Tupu &bull; Performance Scorecard
+            Facts Tupu &bull; Constitutional Evaluation Framework
           </span>
         </div>
         <button
           onClick={onBack}
           className="text-xs font-bold text-slate-400 hover:text-white transition px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700"
         >
-          ← Back to Leaders List
+          ← Back to Feed
         </button>
       </div>
 
@@ -126,41 +183,45 @@ export default function IndividualScorecard({
               </p>
             </div>
 
-            {/* INTERACTIVE PRIMARY METRICS SUMMARY */}
-            <div className="w-full md:w-auto flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800 min-w-0 sm:min-w-[280px] md:min-w-[320px] justify-between">
+            {/* INTERACTIVE METRICS TAB SELECTOR */}
+            <div className="w-full md:w-auto flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800 overflow-x-auto">
+              <button
+                onClick={() => setActiveMetricTab("rubric")}
+                className={`flex-1 min-w-[80px] p-2 rounded-lg transition-all duration-200 text-center ${
+                  activeMetricTab === "rubric"
+                    ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
+                    : "hover:bg-slate-800/50 border border-transparent"
+                }`}
+              >
+                <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
+                  Framework Score
+                </span>
+                <span className="block mt-0.5 font-mono text-lg font-black text-emerald-400">
+                  {evalLoading
+                    ? "..."
+                    : `${evaluation?.overall_score ?? leader.impact_rating}%`}
+                </span>
+              </button>
+
               <button
                 onClick={() => setActiveMetricTab("talk")}
-                className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
+                className={`flex-1 min-w-[80px] p-2 rounded-lg transition-all duration-200 text-center ${
                   activeMetricTab === "talk"
                     ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
                     : "hover:bg-slate-800/50 border border-transparent"
                 }`}
               >
                 <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
-                  Talk vs Action
+                  Jaba Index
                 </span>
                 <span className="block mt-0.5 font-mono text-lg font-black text-amber-400">
                   {leader.jaba_meter}%
                 </span>
               </button>
-              <button
-                onClick={() => setActiveMetricTab("delivery")}
-                className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
-                  activeMetricTab === "delivery"
-                    ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
-                    : "hover:bg-slate-800/50 border border-transparent"
-                }`}
-              >
-                <span className="block text-[9px] font-bold text-slate-500 uppercase tracking-tight">
-                  Delivery Score
-                </span>
-                <span className="block mt-0.5 font-mono text-lg font-black text-cyan-400">
-                  {leader.impact_rating}
-                </span>
-              </button>
+
               <button
                 onClick={() => setActiveMetricTab("risk")}
-                className={`flex-1 flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
+                className={`flex-1 min-w-[80px] p-2 rounded-lg transition-all duration-200 text-center ${
                   activeMetricTab === "risk"
                     ? "bg-slate-950 border border-slate-700 shadow-md scale-105"
                     : "hover:bg-slate-800/50 border border-transparent"
@@ -170,14 +231,42 @@ export default function IndividualScorecard({
                   Risk Level
                 </span>
                 <span className="block mt-0.5 font-mono text-lg font-black text-rose-400">
-                  {leader.rvs}
+                  {leader.rvs}%
                 </span>
               </button>
             </div>
           </div>
 
-          {/* NEW: Office Mandate Box */}
-          <div className="pt-4 border-t border-slate-900 text-xs text-slate-400 leading-relaxed bg-slate-900/30 p-3 rounded-lg border border-slate-800/50">
+          {/* VERDICT BANNER & AUDIT PENALTY NOTIFICATION */}
+          {evaluation && (
+            <div
+              className={`p-4 rounded-lg border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                isPenalized
+                  ? "bg-rose-950/40 border-rose-800/80 text-rose-300"
+                  : "bg-emerald-950/30 border-emerald-800/60 text-emerald-300"
+              }`}
+            >
+              <div>
+                <span className="font-extrabold uppercase text-[10px] tracking-wider block mb-0.5 opacity-80">
+                  🏛️ Constitutional Framework Verdict
+                </span>
+                <p className="font-bold text-sm tracking-wide">
+                  {evaluation.summary_verdict}
+                </p>
+              </div>
+              <div className="shrink-0 bg-slate-950/80 px-3 py-1.5 rounded border border-slate-800 text-right">
+                <span className="text-[9px] font-bold uppercase text-slate-400 block">
+                  Office Standard
+                </span>
+                <span className="font-mono font-bold text-white text-xs">
+                  {evaluation.role}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Official Office Mandate Statement */}
+          <div className="pt-2 text-xs text-slate-400 leading-relaxed bg-slate-900/30 p-3 rounded-lg border border-slate-800/50">
             <span className="font-extrabold uppercase text-[10px] tracking-wider text-slate-500 block mb-1">
               ⚖️ Official Mandate Statement
             </span>
@@ -185,13 +274,13 @@ export default function IndividualScorecard({
           </div>
         </div>
 
-        {/* AI DEEP DIVE - TWO COLUMN GRID */}
+        {/* AI DEEP DIVE & FRAMEWORK SCORECARD SECTION */}
         <div className="grid gap-6 md:grid-cols-2 items-start">
           {/* LEFT COLUMN: DYNAMIC METRIC JUSTIFICATION */}
-          <div className="rounded-xl border border-slate-800/60 bg-slate-950 p-6 flex flex-col h-full min-h-[350px]">
+          <div className="rounded-xl border border-slate-800/60 bg-slate-950 p-6 flex flex-col h-full min-h-[380px]">
             <div className="border-b border-slate-800/60 pb-3 flex items-center justify-between mb-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                AI Context & Explanations
+                Evaluation Analytics & Citations
               </h3>
               <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">
                 Selected: {activeMetricTab}
@@ -199,15 +288,91 @@ export default function IndividualScorecard({
             </div>
 
             <div className="flex-1 space-y-4">
+              {/* RUBRIC TAB: CONSTITUTIONAL RUBRICS AND STATUTORY EVIDENCE */}
+              {activeMetricTab === "rubric" && (
+                <div className="animate-fadeIn space-y-4">
+                  {evalLoading && (
+                    <div className="py-12 text-center">
+                      <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
+                      <p className="text-xs text-slate-500 mt-2">
+                        Running constitutional evaluation algorithm...
+                      </p>
+                    </div>
+                  )}
+
+                  {evalError && (
+                    <div className="p-4 rounded-lg bg-rose-950/20 border border-rose-900/50 text-xs text-rose-400">
+                      ⚠️ {evalError}
+                    </div>
+                  )}
+
+                  {!evalLoading && evaluation && (
+                    <div className="space-y-4">
+                      {evaluation.rubric_scores.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-slate-900/60 p-3.5 rounded-lg border border-slate-800 space-y-2"
+                        >
+                          <div className="flex justify-between items-center text-xs font-bold text-slate-200">
+                            <span>{item.category_name}</span>
+                            <span className="font-mono text-emerald-400">
+                              {item.score}%{" "}
+                              <span className="text-[10px] text-slate-500 font-normal">
+                                (Weight: {Math.round(item.weight * 100)}%)
+                              </span>
+                            </span>
+                          </div>
+
+                          {/* Progress bar */}
+                          <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+                            <div
+                              className="h-full bg-emerald-500 rounded-full"
+                              style={{
+                                width: `${Math.min(100, Math.max(0, item.score))}%`,
+                              }}
+                            />
+                          </div>
+
+                          <p className="text-[11px] text-slate-400 leading-relaxed italic pt-1">
+                            {item.analysis_notes}
+                          </p>
+
+                          {/* Statutory Evidence Snippets */}
+                          {item.evidence_snippets &&
+                            item.evidence_snippets.length > 0 && (
+                              <div className="pt-2 border-t border-slate-800/80 space-y-1">
+                                <span className="text-[9px] font-bold uppercase text-cyan-400 block tracking-wider">
+                                  Verified Statutory Evidence Sources:
+                                </span>
+                                {item.evidence_snippets.map((snip, sIdx) => (
+                                  <div
+                                    key={sIdx}
+                                    className="text-[11px] text-slate-300 bg-slate-950 px-2.5 py-1 rounded border border-slate-800 flex items-center gap-2"
+                                  >
+                                    <span className="text-cyan-500 text-xs">
+                                      📜
+                                    </span>
+                                    <span>{snip}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TALK VS ACTION TAB */}
               {activeMetricTab === "talk" && (
                 <div className="animate-fadeIn">
                   <span className="font-bold text-amber-400 text-xs block mb-1">
                     💬 Talk vs Action (Jaba Meter)
                   </span>
                   <p className="text-xs text-slate-400 leading-relaxed italic mb-4">
-                    Measures how much time a leader spends on political rhetoric
-                    or unverified promises versus verified development steps on
-                    the ground.
+                    Measures political rhetoric and unverified promises versus
+                    verified ground activity.
                   </p>
                   <div className="space-y-3">
                     {aiMonitor.talk_vs_action_justification.map((item, idx) => (
@@ -223,66 +388,15 @@ export default function IndividualScorecard({
                 </div>
               )}
 
-              {/* NEW: Dual Track Delivery Split View */}
-              {activeMetricTab === "delivery" && (
-                <div className="animate-fadeIn space-y-5">
-                  <div>
-                    <span className="font-bold text-cyan-400 text-xs block mb-1">
-                      🏗️ Developmental Track Justification
-                    </span>
-                    <p className="text-[11px] text-slate-500 italic mb-2">
-                      Physical structures completed, machinery commissioned, and
-                      project funding execution files.
-                    </p>
-                    <div className="space-y-2">
-                      {aiMonitor.developmental_delivery_justification.map(
-                        (item, idx) => (
-                          <div
-                            key={idx}
-                            className="flex gap-2.5 items-start text-xs text-slate-300 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"
-                          >
-                            <span className="text-cyan-400 mt-0.5">✓</span>
-                            <span className="leading-relaxed">{item}</span>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <span className="font-bold text-teal-400 text-xs block mb-1">
-                      📜 Legislative & Oversight Track Justification
-                    </span>
-                    <p className="text-[11px] text-slate-500 italic mb-2">
-                      Attendance data, committee output performance indices, and
-                      structural policy regularizations submitted.
-                    </p>
-                    <div className="space-y-2">
-                      {aiMonitor.legislative_delivery_justification.map(
-                        (item, idx) => (
-                          <div
-                            key={idx}
-                            className="flex gap-2.5 items-start text-xs text-slate-300 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800"
-                          >
-                            <span className="text-teal-400 mt-0.5">⚖️</span>
-                            <span className="leading-relaxed">{item}</span>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
+              {/* RISK LEVEL TAB */}
               {activeMetricTab === "risk" && (
                 <div className="animate-fadeIn">
                   <span className="font-bold text-rose-400 text-xs block mb-1">
-                    ⚠️ Risk Level
+                    ⚠️ Risk Level & Audit Discrepancies
                   </span>
                   <p className="text-xs text-slate-400 leading-relaxed italic mb-4">
                     Rates management discrepancies, structural transparency
-                    gaps, or missing budget audit reports. Lower means cleaner
-                    leadership.
+                    gaps, and Auditor-General report flags.
                   </p>
                   <div className="space-y-3">
                     {aiMonitor.risk_level_justification.map((item, idx) => (
@@ -302,7 +416,7 @@ export default function IndividualScorecard({
 
           {/* RIGHT COLUMN: AI ANALYTICS PANELS */}
           <div className="space-y-6">
-            {/* Sector A: Practicality Sliders */}
+            {/* Practicality Sliders */}
             <div className="rounded-xl border border-slate-800/60 bg-slate-950 p-5 space-y-5">
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-bold text-slate-300">
@@ -340,7 +454,7 @@ export default function IndividualScorecard({
               </div>
             </div>
 
-            {/* Sector B: Core Focus Areas */}
+            {/* Core Priorities */}
             <div className="rounded-xl border border-slate-800/60 bg-slate-950 p-5 space-y-4">
               <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-cyan-400 flex items-center gap-2">
                 📂 Core Focus Areas & Priorities
@@ -362,7 +476,7 @@ export default function IndividualScorecard({
               </div>
             </div>
 
-            {/* Sector C: Leadership Matchup */}
+            {/* Leadership Matchup */}
             <div className="rounded-xl border border-slate-800/60 bg-slate-950 p-5 space-y-4">
               <h4 className="text-[10px] font-extrabold uppercase tracking-widest text-rose-400 flex items-center gap-2">
                 🛡️ Current Leadership Matchup

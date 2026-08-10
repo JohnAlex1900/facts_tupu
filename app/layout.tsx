@@ -1,6 +1,7 @@
 import { QuotaProvider } from "@/components/QuotaContext";
 import Providers from "@/app/providers";
 import "@/app/globals.css"; // Your Tailwind imports
+import Script from "next/script";
 
 export const metadata = {
   title: "FACTS TUPU | Accountability & Intelligence Platform",
@@ -23,11 +24,11 @@ export default function RootLayout({
     <html lang="en" className="bg-slate-950 text-slate-50 antialiased">
       <body>
         <head>
-          <script
-            defer
+          <Script
             src="https://cloud.umami.is/script.js"
             data-website-id="d97f58c6-b286-4614-879d-b688694dfaa3"
-          ></script>
+            strategy="afterInteractive" // Ensures it loads without blocking hydration
+          />
         </head>
         <Providers>
           <QuotaProvider>{children}</QuotaProvider>
