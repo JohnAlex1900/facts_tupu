@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 
-const BASE_API_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const BASE_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const fetchChallengerData = async (id: string) => {
   try {
@@ -19,7 +18,7 @@ const fetchChallengerData = async (id: string) => {
     }
     return await response.json();
   } catch (error) {
-    console.error("Backend pipeline lookup error:", error);
+    console.error("Backend pipeline lookup issue:", error);
     return null;
   }
 };
