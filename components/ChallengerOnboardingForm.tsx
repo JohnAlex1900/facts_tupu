@@ -72,13 +72,27 @@ export default function ChallengerOnboardingForm({
   const [selectedWard, setSelectedWard] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionStage, setSubmissionStage] = useState(
-    "Pay KES 2,500 & Deploy Profile",
-  );
+  const [submissionStage, setSubmissionStage] = useState("Processing...");
   const [errorMessage, setErrorMessage] = useState("");
 
   // Agreement Modal State
   const [showAgreementModal, setShowAgreementModal] = useState(false);
+
+  // STEP 2 FIX: Dynamic Fee Calculation based on Target Role
+  const currentFee = useMemo(() => {
+    switch (formData.target_role) {
+      case "governor":
+      case "senator":
+        return "200,000";
+      case "women_rep":
+      case "mp":
+        return "100,000";
+      case "mca":
+        return "75,000";
+      default:
+        return "100,000";
+    }
+  }, [formData.target_role]);
 
   // Synchronize Administrative Tree Structures
   useEffect(() => {
@@ -223,7 +237,7 @@ export default function ChallengerOnboardingForm({
       // Instead of submitting to backend immediately, trigger the modal
       setShowAgreementModal(true);
       setIsSubmitting(false);
-      setSubmissionStage("Pay KES 25,000 & Deploy Profile");
+      setSubmissionStage(`Pay KES ${currentFee} & Deploy Profile`);
     } catch (err: unknown) {
       setScanStatus("failed");
       setErrorMessage(
@@ -297,7 +311,7 @@ export default function ChallengerOnboardingForm({
         (err as Error).message || "Network layer processing failure.",
       );
       setIsSubmitting(false);
-      setSubmissionStage("Pay KES 25,000 & Deploy Profile");
+      setSubmissionStage(`Pay KES ${currentFee} & Deploy Profile`);
     }
   };
 
@@ -628,7 +642,7 @@ export default function ChallengerOnboardingForm({
             By deploying this alternative tracking model, you are initiating a
             tokenized gateway request of{" "}
             <span className="text-emerald-400 font-mono font-bold">
-              KES 25,000
+              KES {currentFee}
             </span>
             .
           </div>
@@ -650,7 +664,7 @@ export default function ChallengerOnboardingForm({
             >
               {isSubmitting
                 ? submissionStage
-                : "Pay KES 25,000 & Deploy Profile"}
+                : `Pay KES ${currentFee} & Deploy Profile`}
             </button>
           </div>
         </form>

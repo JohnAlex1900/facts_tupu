@@ -83,6 +83,11 @@ export default function IndividualScorecard({
   const [evalLoading, setEvalLoading] = useState<boolean>(true);
   const [evalError, setEvalError] = useState<string | null>(null);
 
+  // STEP 1 FIX: Reset scroll position to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   // Fetch live constitutional evaluation matrix from engine_core API
   useEffect(() => {
     let isMounted = true;
@@ -288,7 +293,7 @@ export default function IndividualScorecard({
             </div>
 
             <div className="flex-1 space-y-4">
-              {/* RUBRIC TAB: CONSTITUTIONAL RUBRICS AND STATUTORY EVIDENCE */}
+              {/* RUBRIC TAB */}
               {activeMetricTab === "rubric" && (
                 <div className="animate-fadeIn space-y-4">
                   {evalLoading && (
@@ -323,7 +328,6 @@ export default function IndividualScorecard({
                             </span>
                           </div>
 
-                          {/* Progress bar */}
                           <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-800">
                             <div
                               className="h-full bg-emerald-500 rounded-full"
@@ -337,7 +341,6 @@ export default function IndividualScorecard({
                             {item.analysis_notes}
                           </p>
 
-                          {/* Statutory Evidence Snippets */}
                           {item.evidence_snippets &&
                             item.evidence_snippets.length > 0 && (
                               <div className="pt-2 border-t border-slate-800/80 space-y-1">
