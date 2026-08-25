@@ -2,11 +2,14 @@
 
 import React from "react";
 import { Handshake } from "lucide-react";
+import Image from "next/image";
+import image from "./image.png"; // Import the image asset
 
 interface Partner {
   name: string;
   role: string;
-  icon: string;
+  icon?: string;
+  image?: string; // Added to support custom image assets
 }
 
 export default function PartnershipMarquee() {
@@ -17,6 +20,12 @@ export default function PartnershipMarquee() {
     { name: "Ushahidi", role: "Tech Infrastructure", icon: "🌐" },
     { name: "Code for Africa", role: "Civic Tech", icon: "💻" },
     { name: "Katiba Institute", role: "Constitutionalism", icon: "📜" },
+    // Added ONUG with the image reference
+    {
+      name: "One Nation Under God (ONUG)",
+      role: "Strategic Partner",
+      image: image.src, // Use the imported image asset
+    },
   ];
 
   // Duplicate the list to ensure a flawless, gapless loop during transition
@@ -65,9 +74,19 @@ export default function PartnershipMarquee() {
               key={`${partner.name}-${index}`}
               className="flex items-center gap-4 bg-slate-900/30 border border-slate-900 px-5 py-3 rounded-xl min-w-[240px] sm:min-w-[280px] hover:border-emerald-500/30 hover:bg-slate-900/60 transition-all duration-300 group cursor-pointer"
             >
-              {/* Desaturated emoji icon that lights up on hover */}
-              <div className="text-2xl opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300 transform group-hover:scale-110">
-                {partner.icon}
+              {/* Desaturated icon/image that lights up on hover */}
+              <div className="text-2xl flex items-center justify-center w-8 h-8 opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300 transform group-hover:scale-110">
+                {partner.image ? (
+                  <Image
+                    src={partner.image}
+                    alt={`${partner.name} logo`}
+                    className="w-full h-full object-contain drop-shadow-md"
+                    height={128}
+                    width={128}
+                  />
+                ) : (
+                  partner.icon
+                )}
               </div>
 
               <div className="flex flex-col">
