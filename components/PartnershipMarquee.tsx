@@ -90,10 +90,10 @@ export default function PartnershipMarquee() {
               </div>
 
               <div className="flex flex-col">
-                <span className="text-xs sm:text-sm font-bold text-slate-300 group-hover:text-white transition-colors duration-200 whitespace-nowrap">
+                <span className="text-sm sm:text-sm font-bold text-slate-300 group-hover:text-white transition-colors duration-200 whitespace-nowrap">
                   {partner.name}
                 </span>
-                <span className="text-[10px] text-slate-500 font-medium group-hover:text-emerald-400 transition-colors duration-200 uppercase tracking-wider mt-0.5">
+                <span className="text-[20px] text-slate-500 font-medium group-hover:text-emerald-400 transition-colors duration-200 uppercase tracking-wider mt-0.5">
                   {partner.role}
                 </span>
               </div>

@@ -45,7 +45,7 @@ export default function LandingPage() {
           </span>
         </h1>
 
-        <p className="text-sm sm:text-base text-slate-400 max-w-2xl font-normal leading-relaxed mb-10 px-2 sm:px-0">
+        <p className="text-lg lg:text-base text-slate-400 max-w-2xl font-normal leading-relaxed mb-10 px-2 sm:px-0">
           Welcome to{" "}
           <strong className="text-white font-medium">facts tupu</strong>—a
           clear, reliable data platform tracking all levels of Kenyan
