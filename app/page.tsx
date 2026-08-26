@@ -38,9 +38,10 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight max-w-3xl">
-          FACTS TUPU. Accountability For{" "}
+          FACTS TUPU.
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-            Every Elected Seat.
+            <br />
+            Get To Know Your Leader.
           </span>
         </h1>
 
@@ -50,7 +51,10 @@ export default function LandingPage() {
           clear, reliable data platform tracking all levels of Kenyan
           leadership. We provide factual, un-biased performance metrics,
           tracking what our elected officials promise against what they actually
-          deliver.
+          deliver. Accountability For{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+            Every Elected Seat.
+          </span>
         </p>
 
         {/* PRIMARY CALL TO ACTION GRID */}

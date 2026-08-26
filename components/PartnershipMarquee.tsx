@@ -14,13 +14,13 @@ interface Partner {
 
 export default function PartnershipMarquee() {
   const basePartners: Partner[] = [
-    { name: "Transparency International", role: "Governance", icon: "🏛️" },
-    { name: "Mzalendo Trust", role: "Parliament Watch", icon: "👁️" },
-    { name: "Africa Data Hub", role: "Data Integrity", icon: "📊" },
-    { name: "Ushahidi", role: "Tech Infrastructure", icon: "🌐" },
-    { name: "Code for Africa", role: "Civic Tech", icon: "💻" },
-    { name: "Katiba Institute", role: "Constitutionalism", icon: "📜" },
-    // Added ONUG with the image reference
+    // { name: "Transparency International", role: "Governance", icon: "🏛️" },
+    // { name: "Mzalendo Trust", role: "Parliament Watch", icon: "👁️" },
+    // { name: "Africa Data Hub", role: "Data Integrity", icon: "📊" },
+    // { name: "Ushahidi", role: "Tech Infrastructure", icon: "🌐" },
+    // { name: "Code for Africa", role: "Civic Tech", icon: "💻" },
+    // { name: "Katiba Institute", role: "Constitutionalism", icon: "📜" },
+    // // Added ONUG with the image reference
     {
       name: "One Nation Under God (ONUG)",
       role: "Strategic Partner",
