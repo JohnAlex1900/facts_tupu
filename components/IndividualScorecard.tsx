@@ -159,13 +159,13 @@ export default function IndividualScorecard({
       <div className="bg-slate-950 border-b border-slate-800 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+          <span className="text-xl font-bold uppercase tracking-widest text-slate-400">
             Facts Tupu &bull; Constitutional Evaluation Framework
           </span>
         </div>
         <button
           onClick={onBack}
-          className="text-xs font-bold text-slate-400 hover:text-white transition px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700"
+          className="text-xl font-bold text-slate-400 hover:text-white transition px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-slate-700"
         >
           ← Back to Feed
         </button>
@@ -245,14 +245,14 @@ export default function IndividualScorecard({
           {/* VERDICT BANNER & AUDIT PENALTY NOTIFICATION */}
           {evaluation && (
             <div
-              className={`p-4 rounded-lg border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              className={`p-4 rounded-lg border text-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                 isPenalized
                   ? "bg-rose-950/40 border-rose-800/80 text-rose-300"
                   : "bg-emerald-950/30 border-emerald-800/60 text-emerald-300"
               }`}
             >
               <div>
-                <span className="font-extrabold uppercase text-[10px] tracking-wider block mb-0.5 opacity-80">
+                <span className="font-extrabold uppercase text-[24px] tracking-wider block mb-0.5 opacity-80">
                   🏛️ Constitutional Framework Verdict
                 </span>
                 <p className="font-bold text-sm tracking-wide">
@@ -260,10 +260,10 @@ export default function IndividualScorecard({
                 </p>
               </div>
               <div className="shrink-0 bg-slate-950/80 px-3 py-1.5 rounded border border-slate-800 text-right">
-                <span className="text-[9px] font-bold uppercase text-slate-400 block">
+                <span className="text-[24px] font-bold uppercase text-slate-400 block">
                   Office Standard
                 </span>
-                <span className="font-mono font-bold text-white text-xs">
+                <span className="font-mono font-bold text-white text-xl">
                   {evaluation.role}
                 </span>
               </div>
@@ -271,8 +271,8 @@ export default function IndividualScorecard({
           )}
 
           {/* Official Office Mandate Statement */}
-          <div className="pt-2 text-xs text-slate-400 leading-relaxed bg-slate-900/30 p-3 rounded-lg border border-slate-800/50">
-            <span className="font-extrabold uppercase text-[10px] tracking-wider text-slate-500 block mb-1">
+          <div className="pt-2 text-xl text-slate-400 leading-relaxed bg-slate-900/30 p-3 rounded-lg border border-slate-800/50">
+            <span className="font-extrabold uppercase text-[24px] tracking-wider text-slate-500 block mb-1">
               ⚖️ Official Mandate Statement
             </span>
             {aiMonitor.office_mandate}
@@ -284,10 +284,10 @@ export default function IndividualScorecard({
           {/* LEFT COLUMN: DYNAMIC METRIC JUSTIFICATION */}
           <div className="rounded-xl border border-slate-800/60 bg-slate-950 p-6 flex flex-col h-full min-h-[380px]">
             <div className="border-b border-slate-800/60 pb-3 flex items-center justify-between mb-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
+              <h3 className="text-xl font-bold uppercase tracking-wider text-slate-300">
                 Evaluation Analytics & Citations
               </h3>
-              <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+              <span className="text-[24px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">
                 Selected: {activeMetricTab}
               </span>
             </div>
@@ -299,14 +299,14 @@ export default function IndividualScorecard({
                   {evalLoading && (
                     <div className="py-12 text-center">
                       <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
-                      <p className="text-xs text-slate-500 mt-2">
+                      <p className="text-xl text-slate-500 mt-2">
                         Running constitutional evaluation algorithm...
                       </p>
                     </div>
                   )}
 
                   {evalError && (
-                    <div className="p-4 rounded-lg bg-rose-950/20 border border-rose-900/50 text-xs text-rose-400">
+                    <div className="p-4 rounded-lg bg-rose-950/20 border border-rose-900/50 text-xl text-rose-400">
                       ⚠️ {evalError}
                     </div>
                   )}
@@ -318,11 +318,11 @@ export default function IndividualScorecard({
                           key={idx}
                           className="bg-slate-900/60 p-3.5 rounded-lg border border-slate-800 space-y-2"
                         >
-                          <div className="flex justify-between items-center text-xs font-bold text-slate-200">
+                          <div className="flex justify-between items-center text-xl font-bold text-slate-200">
                             <span>{item.category_name}</span>
                             <span className="font-mono text-emerald-400">
                               {item.score}%{" "}
-                              <span className="text-[10px] text-slate-500 font-normal">
+                              <span className="text-[24px] text-slate-500 font-normal">
                                 (Weight: {Math.round(item.weight * 100)}%)
                               </span>
                             </span>
@@ -337,22 +337,22 @@ export default function IndividualScorecard({
                             />
                           </div>
 
-                          <p className="text-[11px] text-slate-400 leading-relaxed italic pt-1">
+                          <p className="text-[24px] text-slate-400 leading-relaxed italic pt-1">
                             {item.analysis_notes}
                           </p>
 
                           {item.evidence_snippets &&
                             item.evidence_snippets.length > 0 && (
                               <div className="pt-2 border-t border-slate-800/80 space-y-1">
-                                <span className="text-[9px] font-bold uppercase text-cyan-400 block tracking-wider">
+                                <span className="text-[28px] font-bold uppercase text-cyan-400 block tracking-wider">
                                   Verified Statutory Evidence Sources:
                                 </span>
                                 {item.evidence_snippets.map((snip, sIdx) => (
                                   <div
                                     key={sIdx}
-                                    className="text-[11px] text-slate-300 bg-slate-950 px-2.5 py-1 rounded border border-slate-800 flex items-center gap-2"
+                                    className="text-[24px] text-slate-300 bg-slate-950 px-2.5 py-1 rounded border border-slate-800 flex items-center gap-2"
                                   >
-                                    <span className="text-cyan-500 text-xs">
+                                    <span className="text-cyan-500 text-xl font-bold">
                                       📜
                                     </span>
                                     <span>{snip}</span>
@@ -370,10 +370,10 @@ export default function IndividualScorecard({
               {/* TALK VS ACTION TAB */}
               {activeMetricTab === "talk" && (
                 <div className="animate-fadeIn">
-                  <span className="font-bold text-amber-400 text-xs block mb-1">
+                  <span className="font-bold text-amber-400 text-xl block mb-1">
                     💬 Talk vs Action (Jaba Meter)
                   </span>
-                  <p className="text-xs text-slate-400 leading-relaxed italic mb-4">
+                  <p className="text-xl text-slate-400 leading-relaxed italic mb-4">
                     Measures political rhetoric and unverified promises versus
                     verified ground activity.
                   </p>
@@ -381,7 +381,7 @@ export default function IndividualScorecard({
                     {aiMonitor.talk_vs_action_justification.map((item, idx) => (
                       <div
                         key={idx}
-                        className="flex gap-2.5 items-start text-xs text-slate-300 bg-slate-900/50 p-3 rounded-lg border border-slate-800"
+                        className="flex gap-2.5 items-start text-xl text-slate-300 bg-slate-900/50 p-3 rounded-lg border border-slate-800"
                       >
                         <span className="text-amber-500 mt-0.5">⚠️</span>
                         <span className="leading-relaxed">{item}</span>
@@ -394,10 +394,10 @@ export default function IndividualScorecard({
               {/* RISK LEVEL TAB */}
               {activeMetricTab === "risk" && (
                 <div className="animate-fadeIn">
-                  <span className="font-bold text-rose-400 text-xs block mb-1">
+                  <span className="font-bold text-rose-400 text-xl block mb-1">
                     ⚠️ Risk Level & Audit Discrepancies
                   </span>
-                  <p className="text-xs text-slate-400 leading-relaxed italic mb-4">
+                  <p className="text-xl text-slate-400 leading-relaxed italic mb-4">
                     Rates management discrepancies, structural transparency
                     gaps, and Auditor-General report flags.
                   </p>
@@ -405,7 +405,7 @@ export default function IndividualScorecard({
                     {aiMonitor.risk_level_justification.map((item, idx) => (
                       <div
                         key={idx}
-                        className="flex gap-2.5 items-start text-xs text-slate-300 bg-slate-900/50 p-3 rounded-lg border border-slate-800"
+                        className="flex gap-2.5 items-start text-xl text-slate-300 bg-slate-900/50 p-3 rounded-lg border border-slate-800"
                       >
                         <span className="text-rose-500 mt-0.5">⊗</span>
                         <span className="leading-relaxed">{item}</span>
@@ -422,7 +422,7 @@ export default function IndividualScorecard({
             {/* Practicality Sliders */}
             <div className="rounded-xl border border-slate-800/60 bg-slate-950 p-5 space-y-5">
               <div className="space-y-2">
-                <div className="flex justify-between text-xs font-bold text-slate-300">
+                <div className="flex justify-between text-xl font-bold text-slate-300">
                   <span className="flex items-center gap-1.5">
                     <span className="text-emerald-400">📈</span> Action Plan
                     Practicality
@@ -440,7 +440,7 @@ export default function IndividualScorecard({
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-xs font-bold text-slate-300">
+                <div className="flex justify-between text-xl font-bold text-slate-300">
                   <span className="flex items-center gap-1.5">
                     <span className="text-rose-400">📉</span> Exaggeration Risk
                   </span>
@@ -468,10 +468,10 @@ export default function IndividualScorecard({
                     key={priority.id}
                     className="w-full text-left rounded-lg border border-slate-800 bg-slate-900 px-3 py-2.5 flex items-center gap-3 border-l-2 border-l-cyan-500"
                   >
-                    <span className="text-xs font-mono font-black text-cyan-500">
+                    <span className="text-xl font-mono font-black text-cyan-500">
                       {priority.id}.
                     </span>
-                    <span className="text-xs font-semibold text-slate-200">
+                    <span className="text-xl font-semibold text-slate-200">
                       {priority.title}
                     </span>
                   </div>
@@ -493,7 +493,7 @@ export default function IndividualScorecard({
                     <span className="text-[8px] font-black uppercase text-rose-500 block tracking-wider">
                       Incumbent
                     </span>
-                    <span className="text-xs font-bold text-slate-200">
+                    <span className="text-xl font-bold text-slate-200">
                       {leader.name}
                     </span>
                   </div>
@@ -503,7 +503,7 @@ export default function IndividualScorecard({
                     <span className="text-[8px] font-bold text-slate-500 uppercase tracking-tight block">
                       Vulnerability Index
                     </span>
-                    <span className="text-xs font-mono font-bold text-amber-400 mt-1 block">
+                    <span className="text-xl font-mono font-bold text-amber-400 mt-1 block">
                       {aiMonitor.leadership_matchup.vulnerability_index}%
                     </span>
                   </div>
@@ -511,7 +511,7 @@ export default function IndividualScorecard({
                     <span className="text-[8px] font-bold text-slate-500 uppercase tracking-tight block">
                       Performance Score
                     </span>
-                    <span className="text-xs font-mono font-bold text-emerald-400 mt-1 block">
+                    <span className="text-xl font-mono font-bold text-emerald-400 mt-1 block">
                       {aiMonitor.leadership_matchup.performance_score}%
                     </span>
                   </div>
@@ -528,14 +528,14 @@ export default function IndividualScorecard({
               Aspiring Challengers Eying This Position (
               {leader.challengers.length})
             </h3>
-            <span className="text-xs text-slate-500 italic bg-slate-950 px-3 py-1 rounded-full border border-slate-800">
+            <span className="text-xl text-slate-500 italic bg-slate-950 px-3 py-1 rounded-full border border-slate-800">
               Verified alternative options
             </span>
           </div>
 
           {leader.challengers.length === 0 ? (
             <div className="text-center py-8 bg-slate-950/40 border border-dashed border-slate-800 rounded-xl">
-              <p className="text-xs text-slate-500 italic">
+              <p className="text-xl text-slate-500 italic">
                 No alternative track competitors have registered for this
                 leadership slot yet.
               </p>
@@ -556,7 +556,7 @@ export default function IndividualScorecard({
                         Growth Speed: +{challenger.public_traction_velocity}%
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xl text-slate-400">
                       Political Party Group:{" "}
                       <span className="text-slate-200 font-semibold">
                         {challenger.party_affiliation}
@@ -564,7 +564,7 @@ export default function IndividualScorecard({
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-900/60 flex justify-between items-center text-xs">
+                  <div className="mt-4 pt-3 border-t border-slate-900/60 flex justify-between items-center text-xl">
                     <span className="text-slate-500">
                       Community Suitability
                     </span>

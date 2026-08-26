@@ -158,17 +158,17 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
           ))}
         </div>
       ) : error ? (
-        <div className="text-sm text-rose-400 font-medium bg-rose-950/30 p-6 rounded-xl border border-rose-900 space-y-2">
+        <div className="text-xl text-rose-400 font-medium bg-rose-950/30 p-6 rounded-xl border border-rose-900 space-y-2">
           <p className="font-bold">Intelligence Feed Interrupted</p>
           <p className="text-rose-300/80">{error}</p>
         </div>
       ) : profiles.length === 0 ? (
         <div className="border border-dashed border-slate-800 rounded-2xl p-12 text-center max-w-xl mx-auto space-y-3 mt-6">
           <div className="text-2xl text-slate-600">📂</div>
-          <h4 className="text-sm font-bold text-slate-300">
+          <h4 className="text-xl font-bold text-slate-300">
             No Representatives Found
           </h4>
-          <p className="text-xs text-slate-500 leading-relaxed">
+          <p className="text-xl text-slate-500 leading-relaxed">
             No matching active leader profiles or location parameters matched
             your current criteria query.
           </p>
@@ -185,15 +185,15 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex gap-1.5">
-                      <span className="text-sm sm:text-[9px] font-bold bg-indigo-950/60 px-2 py-0.5 rounded text-indigo-400 border border-indigo-900 uppercase tracking-wider">
+                      <span className="text-xl sm:text-[18px] font-bold bg-indigo-950/60 px-2 py-0.5 rounded text-indigo-400 border border-indigo-900 uppercase tracking-wider">
                         {leader.type}
                       </span>
-                      <span className="text-sm sm:text-[9px] font-bold bg-slate-950 px-2 py-0.5 rounded text-slate-400 border border-slate-800 uppercase tracking-wider">
+                      <span className="text-xl sm:text-[18px] font-bold bg-slate-950 px-2 py-0.5 rounded text-slate-400 border border-slate-800 uppercase tracking-wider">
                         {leader.target_role} • {leader.party_affiliation}
                       </span>
                     </div>
                     <span
-                      className={`text-sm sm:text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(leader.sentiment_label)}`}
+                      className={`text-xl sm:text-[18px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(leader.sentiment_label)}`}
                     >
                       {leader.sentiment_label.replace("_", " ")}
                     </span>
@@ -202,14 +202,14 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                     <h3 className="text-base font-extrabold text-white tracking-tight leading-snug group-hover:text-cyan-400 transition-colors">
                       {leader.full_name}
                     </h3>
-                    <p className="text-xs font-semibold text-emerald-400 mt-0.5 flex items-center gap-1">
+                    <p className="text-xl font-semibold text-emerald-400 mt-0.5 flex items-center gap-1">
                       📍 {leader.location_name}
                     </p>
                   </div>
                 </div>
 
                 <div className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-850/60 space-y-2.5 flex-1">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                  <span className="text-[20px] font-bold text-slate-500 uppercase tracking-wider block">
                     Live AI Monitor Summary:
                   </span>
                   <ul className="space-y-2 text-base sm:text-[11px] text-slate-200 leading-relaxed font-medium line-clamp-4">
@@ -239,7 +239,7 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                       style={{ width: `${leader.traction_score}%` }}
                     />
                   </div>
-                  <span className="text-sm sm:text-[9px] font-mono text-slate-500 block text-right pt-0.5">
+                  <span className="text-xl sm:text-[18px] font-mono text-slate-500 block text-right pt-0.5">
                     Audit Sync:{" "}
                     {new Date(leader.last_audit_timestamp).toLocaleTimeString(
                       [],
@@ -283,36 +283,36 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
               <div className="animate-in fade-in duration-300">
                 <div className="mb-5">
                   <div className="flex gap-2 mb-2">
-                    <span className="text-[10px] uppercase font-bold bg-indigo-950/60 text-indigo-400 px-2 py-0.5 rounded border border-indigo-900 tracking-wider">
+                    <span className="text-[20px] uppercase font-bold bg-indigo-950/60 text-indigo-400 px-2 py-0.5 rounded border border-indigo-900 tracking-wider">
                       {selectedLeader.type}
                     </span>
-                    <span className="text-[10px] uppercase font-bold bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800 tracking-wider">
+                    <span className="text-[20px] uppercase font-bold bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800 tracking-wider">
                       {selectedLeader.target_role} •{" "}
                       {selectedLeader.party_affiliation}
                     </span>
                     <span
-                      className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(selectedLeader.sentiment_label)}`}
+                      className={`ml-auto text-[20px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(selectedLeader.sentiment_label)}`}
                     >
                       {selectedLeader.sentiment_label.replace("_", " ")}
                     </span>
                   </div>
                   <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
                     {selectedLeader.full_name}
-                    <span className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold uppercase">
+                    <span className="text-[20px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold uppercase">
                       Incumbent
                     </span>
                   </h2>
-                  <p className="text-xs text-emerald-400 font-semibold mt-0.5">
+                  <p className="text-xl text-emerald-400 font-semibold mt-0.5">
                     Jurisdiction Area: 📍 {selectedLeader.location_name}
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
-                    <h4 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
+                    <h4 className="text-[20px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
                       Deep Intelligence Metric Assessment
                     </h4>
-                    <ul className="space-y-3 text-xs text-slate-200 list-none leading-relaxed">
+                    <ul className="space-y-3 text-xl text-slate-200 list-none leading-relaxed">
                       {selectedLeader.analysis_points.map((point, index) => (
                         <li key={index} className="flex items-start gap-2.5">
                           <span className="text-cyan-400 select-none font-bold">
@@ -330,7 +330,7 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                   />
 
                   <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
-                    <div className="flex justify-between text-xs font-bold mb-2">
+                    <div className="flex justify-between text-xl font-bold mb-2">
                       <span className="text-slate-400">
                         Search Footprint Weight Scale:
                       </span>
@@ -352,7 +352,7 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                       <h4 className="text-[11px] uppercase tracking-wider font-bold text-slate-300">
                         Registered Challengers
                       </h4>
-                      <span className="text-[10px] text-slate-500 font-mono">
+                      <span className="text-[20px] text-slate-500 font-mono">
                         AI Monitored
                       </span>
                     </div>
@@ -367,7 +367,7 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                           >
                             <div>
                               <div className="flex justify-between items-start mb-1.5">
-                                <span className="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors">
+                                <span className="text-xl font-bold text-slate-200 group-hover:text-cyan-400 transition-colors">
                                   {challenger.full_name}
                                 </span>
                                 <span
@@ -376,7 +376,7 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                                   {challenger.sentiment_label}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-1.5 text-[9px] uppercase font-bold text-slate-400">
+                              <div className="flex items-center gap-1.5 text-[18px] uppercase font-bold text-slate-400">
                                 <span>{challenger.target_role}</span>
                                 <span className="text-slate-600">•</span>
                                 <span className="text-emerald-500/80">
@@ -384,7 +384,7 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                                 </span>
                               </div>
                             </div>
-                            <div className="mt-3 flex items-center justify-between text-[10px]">
+                            <div className="mt-3 flex items-center justify-between text-[20px]">
                               <span className="text-slate-500">
                                 View AI Audit →
                               </span>
@@ -401,40 +401,40 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
               <div className="animate-in slide-in-from-right-4 fade-in duration-300">
                 <button
                   onClick={() => setSelectedChallenger(null)}
-                  className="mb-5 flex items-center gap-1.5 text-xs font-bold text-cyan-500 hover:text-cyan-400 transition-colors bg-cyan-950/30 px-3 py-1.5 rounded-lg border border-cyan-900/50 w-fit"
+                  className="mb-5 flex items-center gap-1.5 text-xl font-bold text-cyan-500 hover:text-cyan-400 transition-colors bg-cyan-950/30 px-3 py-1.5 rounded-lg border border-cyan-900/50 w-fit"
                 >
                   <span>←</span> Return to Incumbent {selectedLeader.full_name}
                 </button>
 
                 <div className="mb-5">
                   <div className="flex gap-2 mb-2">
-                    <span className="text-[10px] uppercase font-bold bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800 tracking-wider">
+                    <span className="text-[20px] uppercase font-bold bg-slate-950 text-slate-400 px-2 py-0.5 rounded border border-slate-800 tracking-wider">
                       {selectedChallenger.target_role} •{" "}
                       {selectedChallenger.party_affiliation}
                     </span>
                     <span
-                      className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(selectedChallenger.sentiment_label)}`}
+                      className={`ml-auto text-[20px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider ${getSentimentBadge(selectedChallenger.sentiment_label)}`}
                     >
                       {selectedChallenger.sentiment_label.replace("_", " ")}
                     </span>
                   </div>
                   <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
                     {selectedChallenger.full_name}
-                    <span className="text-[10px] bg-indigo-950/60 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-900 font-bold uppercase">
+                    <span className="text-[20px] bg-indigo-950/60 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-900 font-bold uppercase">
                       Challenger Profile
                     </span>
                   </h2>
-                  <p className="text-xs text-emerald-400 font-semibold mt-0.5">
+                  <p className="text-xl text-emerald-400 font-semibold mt-0.5">
                     Target Jurisdiction: 📍 {selectedChallenger.location_name}
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
-                    <h4 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
+                    <h4 className="text-[20px] uppercase tracking-wider font-bold text-slate-400 mb-2.5">
                       Challenger Threat & Metric Assessment
                     </h4>
-                    <ul className="space-y-3 text-xs text-slate-200 list-none leading-relaxed">
+                    <ul className="space-y-3 text-xl text-slate-200 list-none leading-relaxed">
                       {selectedChallenger.analysis_points.map(
                         (point, index) => (
                           <li key={index} className="flex items-start gap-2.5">
@@ -454,7 +454,7 @@ export default function AIMonitorSector({ searchQuery }: AIMonitorSectorProps) {
                   />
 
                   <div className="bg-slate-950/80 border border-slate-850 rounded-xl p-4">
-                    <div className="flex justify-between text-xs font-bold mb-2">
+                    <div className="flex justify-between text-xl font-bold mb-2">
                       <span className="text-slate-400">
                         Challenger Campaign Footprint:
                       </span>
