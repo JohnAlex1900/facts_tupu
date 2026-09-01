@@ -41,7 +41,7 @@ export default function LandingPage() {
           FACTS TUPU.
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
             <br />
-            Get To Know Your Leader.
+            Get To Know Your Candidate.
           </span>
         </h1>
 

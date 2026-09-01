@@ -12,6 +12,36 @@ import AIMonitorSector from "@/components/AIMonitorSector";
 import TopAdBanner from "@/components/TopAdBanner";
 import Link from "next/link";
 
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+}
+
+interface SpeechRecognitionInstance extends EventTarget {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onstart: (() => void) | null;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+}
+
+interface CustomWindow extends Window {
+  SpeechRecognition?: new () => SpeechRecognitionInstance;
+  webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
+}
+
 interface Challenger {
   challenger_id: string;
   full_name: string;
@@ -64,7 +94,24 @@ interface Profile {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+const playAccessibilityAudio = async (text: string) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/accessibility/tts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text_content: text }),
+    });
+    const blob = await res.blob();
+    const audio = new Audio(URL.createObjectURL(blob));
+    audio.play();
+  } catch (error) {
+    console.error("Audio access failed:", error);
+  }
+};
+
 export default function PublicDashboard() {
+  const isInitialMount = React.useRef(true);
+
   const {
     lookupCount,
     maxQuota,
@@ -74,6 +121,10 @@ export default function PublicDashboard() {
   } = useQuota();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   // Search states for different tabs
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,25 +156,89 @@ export default function PublicDashboard() {
     }
   }, [activeTab, hasVisitedAiMonitor]);
 
+  // Reset pagination entirely if the user alters search parameters
   useEffect(() => {
-    async function loadProfiles() {
+    setPage(1);
+    setHasMore(true);
+  }, [searchQuery, activeLayer]);
+
+  // Main data layer sync & background score polling
+  useEffect(() => {
+    let isMounted = true;
+    let pollInterval: NodeJS.Timeout;
+
+    async function loadProfiles(isBackgroundPoll = false) {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/profiles`, {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          },
+        if (!isBackgroundPoll) {
+          if (page === 1 && isInitialMount.current && !searchQuery) {
+            setLoading(true);
+          } else {
+            setLoadingMore(true);
+          }
+        }
+
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: "20",
         });
-        const data = await response.json();
-        setProfiles(data);
-        resetQuotaAfterPayment(); // Reset quota after successful data fetch
+
+        if (searchQuery) params.append("search", searchQuery);
+        if (activeLayer && activeLayer !== "all")
+          params.append("seat_layer", activeLayer);
+
+        const response = await fetch(
+          `${API_BASE_URL}/api/v1/profiles?${params.toString()}`,
+          { headers: { "ngrok-skip-browser-warning": "true" } },
+        );
+        const data: Profile[] = await response.json();
+
+        if (isMounted) {
+          if (data.length < 20) setHasMore(false);
+          else setHasMore(true);
+
+          // In PublicDashboard.tsx inside loadProfiles()
+          setProfiles((prev) => {
+            const uniqueMap = new Map<string, Profile>();
+
+            // Only discard previous data on a fresh manual page 1 load (e.g., a new search)
+            if (!(page === 1 && !isBackgroundPoll)) {
+              prev.forEach((profile) => uniqueMap.set(profile.id, profile));
+            }
+
+            // Merge fresh polled data or new page data
+            data.forEach((profile) => uniqueMap.set(profile.id, profile));
+            return Array.from(uniqueMap.values());
+          });
+
+          if (page === 1 && !isBackgroundPoll) {
+            resetQuotaAfterPayment();
+          }
+          isInitialMount.current = false;
+        }
       } catch (error) {
         console.error("Data Layer Connection Failure:", error);
       } finally {
-        setLoading(false);
+        if (isMounted && !isBackgroundPoll) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
       }
     }
-    loadProfiles();
-  }, [resetQuotaAfterPayment]);
+
+    const delaySearch = setTimeout(() => {
+      loadProfiles(false);
+
+      pollInterval = setInterval(() => {
+        loadProfiles(true);
+      }, 20000);
+    }, 300);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(delaySearch);
+      if (pollInterval) clearInterval(pollInterval);
+    };
+  }, [page, searchQuery, activeLayer, resetQuotaAfterPayment]);
 
   const handleOpenScorecard = (leader: Profile) => {
     registerLookup(leader.id);
@@ -143,6 +258,52 @@ export default function PublicDashboard() {
       p.role.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesLayer && matchesSearch;
   });
+
+  const [isListening, setIsListening] = useState(false);
+  const [voiceSearchActive, setVoiceSearchActive] = useState(false);
+
+  // Automatically read results aloud once a voice search fetch completes
+  useEffect(() => {
+    if (voiceSearchActive && !loadingMore && !loading) {
+      const count = filteredProfiles.length;
+      if (count > 0) {
+        const top = filteredProfiles[0];
+        playAccessibilityAudio(
+          `Search matched. Found ${count} representative${count > 1 ? "s" : ""}. Top result is ${top.name}, ${top.role} of ${top.county}.`,
+        );
+      } else {
+        playAccessibilityAudio("Search complete. Representative not found.");
+      }
+      setVoiceSearchActive(false);
+    }
+  }, [loadingMore, loading, voiceSearchActive, filteredProfiles]);
+
+  // Speech-to-Text Handler
+  const handleVoiceSearch = () => {
+    const customWindow = window as unknown as CustomWindow;
+    const SpeechRecognitionConstructor =
+      customWindow.SpeechRecognition || customWindow.webkitSpeechRecognition;
+
+    if (!SpeechRecognitionConstructor) {
+      alert("Voice search is not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognitionConstructor();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = event.results[0][0].transcript.replace(/\.$/, "");
+      setSearchQuery(transcript);
+      setVoiceSearchActive(true);
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+    recognition.start();
+  };
 
   if (loading) {
     return (
@@ -319,8 +480,40 @@ export default function PublicDashboard() {
                 placeholder="Search by leader name, county, or position..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition focus:border-emerald-500"
+                className="w-full rounded-lg border border-slate-800 bg-slate-950 pl-4 pr-24 py-2.5 text-xs text-slate-100 placeholder-slate-500 outline-none transition focus:border-emerald-500"
               />
+
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                {loadingMore && (
+                  <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></div>
+                )}
+
+                <button
+                  onClick={handleVoiceSearch}
+                  className={`transition-colors text-lg ${isListening ? "text-rose-400 animate-pulse" : "text-slate-400 hover:text-emerald-400"}`}
+                  aria-label="Search by voice"
+                >
+                  {isListening ? "🎙️" : "🎤"}
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (!searchQuery) return;
+                    const count = filteredProfiles.length;
+                    const topResult =
+                      count > 0
+                        ? `Top result is ${filteredProfiles[0].name}, ${filteredProfiles[0].role}.`
+                        : "";
+                    playAccessibilityAudio(
+                      `Search complete for ${searchQuery}. Found ${count} representatives. ${topResult}`,
+                    );
+                  }}
+                  className="text-slate-400 hover:text-emerald-400 text-lg"
+                  aria-label="Read current search results aloud"
+                >
+                  🔊
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-900 overflow-x-auto scrollbar-none max-w-full">
@@ -450,6 +643,26 @@ export default function PublicDashboard() {
               </div>
             ))}
           </div>
+
+          {/* NEXT BATCH PAGINATION CONTROL */}
+          {hasMore && (
+            <div className="mt-8 flex justify-center w-full">
+              <button
+                onClick={() => setPage((prev) => prev + 1)}
+                disabled={loadingMore}
+                className="px-6 py-3 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 font-bold uppercase tracking-wider text-xs hover:bg-slate-800 hover:text-emerald-400 hover:border-emerald-500/50 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loadingMore ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent"></span>
+                    Retrieving Next Batch...
+                  </span>
+                ) : (
+                  "Load More Representatives ↓"
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* PROGRESS SECTOR - Lazy mounted on first click, then persistent */}
