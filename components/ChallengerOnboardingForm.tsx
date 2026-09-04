@@ -75,24 +75,32 @@ export default function ChallengerOnboardingForm({
   const [submissionStage, setSubmissionStage] = useState("Processing...");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [billingCycle, setBillingCycle] = useState<
+    "monthly" | "quarterly" | "annually"
+  >("annually");
+
   // Agreement Modal State
   const [showAgreementModal, setShowAgreementModal] = useState(false);
 
   // STEP 2 FIX: Dynamic Fee Calculation based on Target Role
+  const PRICING = useMemo(
+    () => ({
+      mca: { monthly: "8,000", quarterly: "20,000", annually: "75,000" },
+      mp: { monthly: "10,000", quarterly: "25,000", annually: "100,000" },
+      governor: { monthly: "20,000", quarterly: "50,000", annually: "200,000" },
+      senator: { monthly: "20,000", quarterly: "50,000", annually: "200,000" },
+      women_rep: {
+        monthly: "20,000",
+        quarterly: "50,000",
+        annually: "200,000",
+      },
+    }),
+    [],
+  );
+
   const currentFee = useMemo(() => {
-    switch (formData.target_role) {
-      case "governor":
-      case "senator":
-        return "200,000";
-      case "women_rep":
-      case "mp":
-        return "100,000";
-      case "mca":
-        return "75,000";
-      default:
-        return "100,000";
-    }
-  }, [formData.target_role]);
+    return PRICING[formData.target_role as keyof typeof PRICING][billingCycle];
+  }, [formData.target_role, billingCycle, PRICING]);
 
   // Synchronize Administrative Tree Structures
   useEffect(() => {
@@ -263,6 +271,7 @@ export default function ChallengerOnboardingForm({
       payload.append("target_role", formData.target_role);
       payload.append("associated_id", formData.associated_id);
       payload.append("manifesto_summary", formData.manifesto_summary);
+      payload.append("billing_cycle", billingCycle);
 
       if (manifestoFile) {
         payload.append("manifesto_document", manifestoFile);
@@ -304,6 +313,7 @@ export default function ChallengerOnboardingForm({
           full_name: formData.full_name,
           target_role: formData.target_role,
           associated_id: formData.associated_id,
+          billing_cycle: billingCycle,
         },
       );
     } catch (err: unknown) {
@@ -631,6 +641,38 @@ export default function ChallengerOnboardingForm({
                   )}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* SUBSCRIPTION PLAN SELECTION */}
+          <div className="space-y-3 pt-2">
+            <label className="block text-sm sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              Select Subscription Plan
+            </label>
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+              {(["monthly", "quarterly", "annually"] as const).map((cycle) => (
+                <div
+                  key={cycle}
+                  onClick={() => setBillingCycle(cycle)}
+                  className={`cursor-pointer rounded-xl border p-4 transition-all flex flex-col items-center text-center ${
+                    billingCycle === cycle
+                      ? "border-emerald-500 bg-emerald-950/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                      : "border-slate-800 bg-slate-950 hover:border-slate-700"
+                  }`}
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                    {cycle}
+                  </span>
+                  <span className="text-lg font-bold text-emerald-400">
+                    KES{" "}
+                    {
+                      PRICING[formData.target_role as keyof typeof PRICING][
+                        cycle
+                      ]
+                    }
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 

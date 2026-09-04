@@ -48,7 +48,7 @@ interface Challenger {
   public_traction_velocity: number;
   party_affiliation: string;
   ai_feasibility_score: number;
-  manifesto_pillars?: string[];
+  manifesto_pillars?: string[] | string;
 }
 
 interface AICorePriority {
@@ -92,6 +92,18 @@ interface Profile {
   ai_monitor_data?: AIDeepDiveMonitor;
 }
 
+interface DirectoryChallenger {
+  challenger_id: string;
+  full_name: string;
+  party_affiliation: string;
+  target_role: string;
+  target_location_name: string;
+  ai_feasibility_score: number;
+  public_traction_velocity: number;
+  background_dossier: string;
+  manifesto_pillars: string[] | string;
+}
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const playAccessibilityAudio = async (text: string) => {
@@ -112,13 +124,7 @@ const playAccessibilityAudio = async (text: string) => {
 export default function PublicDashboard() {
   const isInitialMount = React.useRef(true);
 
-  const {
-    lookupCount,
-    maxQuota,
-    accountTier,
-    registerLookup,
-    resetQuotaAfterPayment,
-  } = useQuota();
+  const { lookupCount, maxQuota, accountTier, registerLookup } = useQuota();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -126,19 +132,16 @@ export default function PublicDashboard() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  // Search states for different tabs
   const [searchQuery, setSearchQuery] = useState("");
   const [aiSearchQuery, setAiSearchQuery] = useState("");
 
   const [activeLayer, setActiveLayer] = useState("ALL");
   const router = useRouter();
 
-  // Dashboard segment tabs state
   const [activeTab, setActiveTab] = useState<
     "feed" | "ai-monitor" | "challengers"
   >("feed");
 
-  // Lazy-loading tracker: ensures AI components aren't loaded until visited once
   const [hasVisitedAiMonitor, setHasVisitedAiMonitor] = useState(false);
 
   const [challengerSession, setChallengerSession] =
@@ -149,20 +152,58 @@ export default function PublicDashboard() {
   >("DASHBOARD");
   const [selectedLeader, setSelectedLeader] = useState<Profile | null>(null);
 
-  // Track tab visits to trigger lazy loading
+  const [directoryChallengers, setDirectoryChallengers] = useState<
+    DirectoryChallenger[]
+  >([]);
+  const [loadingChallengers, setLoadingChallengers] = useState(false);
+  const [hasVisitedChallengers, setHasVisitedChallengers] = useState(false);
+
+  // Fetch Challengers Tab Data
+  // Fetch Challengers Tab Data
+  useEffect(() => {
+    let isMounted = true;
+    if (activeTab === "challengers" && !hasVisitedChallengers) {
+      setHasVisitedChallengers(true);
+      setLoadingChallengers(true);
+
+      fetch(`${API_BASE_URL}/api/v1/challengers`, {
+        headers: { "ngrok-skip-browser-warning": "true" },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (isMounted) {
+            const parsedList = Array.isArray(data)
+              ? data
+              : Array.isArray(data?.data)
+                ? data.data
+                : [];
+            setDirectoryChallengers(parsedList);
+            console.log("Challengers loaded:", parsedList.length);
+          }
+        })
+        .catch((err) => console.error("Failed to load challengers:", err))
+        .finally(() => {
+          if (isMounted) setLoadingChallengers(false);
+        });
+    }
+    return () => {
+      isMounted = false;
+    };
+    // FIX: Removed hasVisitedChallengers from this array
+  }, [activeTab]);
+
   useEffect(() => {
     if (activeTab === "ai-monitor" && !hasVisitedAiMonitor) {
       setHasVisitedAiMonitor(true);
     }
   }, [activeTab, hasVisitedAiMonitor]);
 
-  // Reset pagination entirely if the user alters search parameters
   useEffect(() => {
     setPage(1);
     setHasMore(true);
   }, [searchQuery, activeLayer]);
 
-  // Main data layer sync & background score polling
+  // Main Feed Polling & Fetching
   useEffect(() => {
     let isMounted = true;
     let pollInterval: NodeJS.Timeout;
@@ -183,36 +224,50 @@ export default function PublicDashboard() {
         });
 
         if (searchQuery) params.append("search", searchQuery);
-        if (activeLayer && activeLayer !== "all")
+        if (activeLayer && activeLayer !== "ALL")
           params.append("seat_layer", activeLayer);
 
         const response = await fetch(
           `${API_BASE_URL}/api/v1/profiles?${params.toString()}`,
           { headers: { "ngrok-skip-browser-warning": "true" } },
         );
-        const data: Profile[] = await response.json();
+        const rawData = await response.json();
+        const safeRawData: Profile[] = Array.isArray(rawData)
+          ? rawData
+          : Array.isArray(rawData?.data)
+            ? rawData.data
+            : [];
+
+        const data = safeRawData.map((profile) => {
+          let parsedChallengers = profile.challengers;
+          if (typeof parsedChallengers === "string") {
+            try {
+              parsedChallengers = JSON.parse(parsedChallengers);
+            } catch (e) {
+              console.error("Failed to parse challengers:", e);
+              parsedChallengers = [];
+            }
+          }
+          return {
+            ...profile,
+            challengers: Array.isArray(parsedChallengers)
+              ? parsedChallengers
+              : [],
+          };
+        });
 
         if (isMounted) {
-          if (data.length < 20) setHasMore(false);
-          else setHasMore(true);
+          setHasMore(data.length >= 20);
 
-          // In PublicDashboard.tsx inside loadProfiles()
           setProfiles((prev) => {
             const uniqueMap = new Map<string, Profile>();
-
-            // Only discard previous data on a fresh manual page 1 load (e.g., a new search)
             if (!(page === 1 && !isBackgroundPoll)) {
               prev.forEach((profile) => uniqueMap.set(profile.id, profile));
             }
-
-            // Merge fresh polled data or new page data
             data.forEach((profile) => uniqueMap.set(profile.id, profile));
             return Array.from(uniqueMap.values());
           });
 
-          if (page === 1 && !isBackgroundPoll) {
-            resetQuotaAfterPayment();
-          }
           isInitialMount.current = false;
         }
       } catch (error) {
@@ -238,7 +293,7 @@ export default function PublicDashboard() {
       clearTimeout(delaySearch);
       if (pollInterval) clearInterval(pollInterval);
     };
-  }, [page, searchQuery, activeLayer, resetQuotaAfterPayment]);
+  }, [page, searchQuery, activeLayer]);
 
   const handleOpenScorecard = (leader: Profile) => {
     registerLookup(leader.id);
@@ -250,19 +305,49 @@ export default function PublicDashboard() {
     }
   };
 
-  const filteredProfiles = profiles.filter((p) => {
-    const matchesLayer = activeLayer === "ALL" || p.seat_layer === activeLayer;
-    const matchesSearch =
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.county.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.role.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesLayer && matchesSearch;
+  // Safe Null-Checked Search Filters
+  const filteredProfiles = (Array.isArray(profiles) ? profiles : []).filter(
+    (p) => {
+      const matchesLayer =
+        activeLayer === "ALL" || p.seat_layer === activeLayer;
+      const searchLower = (searchQuery || "").toLowerCase();
+
+      const nameMatches = (p.name || "").toLowerCase().includes(searchLower);
+      const countyMatches = (p.county || "")
+        .toLowerCase()
+        .includes(searchLower);
+      const roleMatches = (p.role || "").toLowerCase().includes(searchLower);
+      const challengerMatches =
+        Array.isArray(p.challengers) &&
+        p.challengers.some((c) =>
+          (c?.full_name || "").toLowerCase().includes(searchLower),
+        );
+
+      return (
+        matchesLayer &&
+        (nameMatches || countyMatches || roleMatches || challengerMatches)
+      );
+    },
+  );
+
+  const filteredChallengers = (
+    Array.isArray(directoryChallengers) ? directoryChallengers : []
+  ).filter((c) => {
+    const searchLower = (searchQuery || "").toLowerCase();
+    const nameMatches = (c.full_name || "").toLowerCase().includes(searchLower);
+    const locationMatches = (c.target_location_name || "")
+      .toLowerCase()
+      .includes(searchLower);
+    const roleMatches = (c.target_role || "")
+      .toLowerCase()
+      .includes(searchLower);
+
+    return nameMatches || locationMatches || roleMatches;
   });
 
   const [isListening, setIsListening] = useState(false);
   const [voiceSearchActive, setVoiceSearchActive] = useState(false);
 
-  // Automatically read results aloud once a voice search fetch completes
   useEffect(() => {
     if (voiceSearchActive && !loadingMore && !loading) {
       const count = filteredProfiles.length;
@@ -278,7 +363,6 @@ export default function PublicDashboard() {
     }
   }, [loadingMore, loading, voiceSearchActive, filteredProfiles]);
 
-  // Speech-to-Text Handler
   const handleVoiceSearch = () => {
     const customWindow = window as unknown as CustomWindow;
     const SpeechRecognitionConstructor =
@@ -305,6 +389,20 @@ export default function PublicDashboard() {
     recognition.start();
   };
 
+  const getPillarText = (pillars?: string[] | string): string => {
+    if (!pillars) return "";
+    if (Array.isArray(pillars) && pillars.length > 0) return pillars[0];
+    if (typeof pillars === "string") {
+      try {
+        const parsed = JSON.parse(pillars);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
+      } catch (e) {
+        return pillars;
+      }
+    }
+    return "";
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-950">
@@ -313,7 +411,6 @@ export default function PublicDashboard() {
     );
   }
 
-  // RESPONSIVE ONBOARDING WRAPPER
   if (currentView === "ONBOARDING") {
     return (
       <div className="min-h-screen bg-slate-950 p-4 sm:p-6 flex flex-col items-center justify-start overflow-y-auto md:justify-center py-10">
@@ -332,7 +429,6 @@ export default function PublicDashboard() {
     );
   }
 
-  // RESPONSIVE CHALLENGER WORKSPACE WRAPPER
   if (currentView === "CHALLENGER_WORKSPACE") {
     if (!challengerSession) return null;
     return (
@@ -350,7 +446,6 @@ export default function PublicDashboard() {
     );
   }
 
-  // INDIVIDUAL SCORECARD VIEW
   if (currentView === "SCORECARD" && selectedLeader) {
     return (
       <div className="min-h-screen bg-slate-950 p-4 md:p-12 flex flex-col items-center justify-start overflow-y-auto md:justify-center py-8">
@@ -389,7 +484,6 @@ export default function PublicDashboard() {
           </p>
         </div>
 
-        {/* DYNAMIC QUOTA BLOCK */}
         <div className="rounded-xl border border-slate-900 bg-slate-900/40 p-4 shadow-xl w-full md:w-auto md:min-w-[280px]">
           <div className="flex items-center justify-between gap-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
             <span>
@@ -437,7 +531,6 @@ export default function PublicDashboard() {
 
       {/* STICKY CONTROL & NAVIGATION HEADER */}
       <div className="sticky top-0 z-30 bg-slate-950/90 backdrop-blur-md pt-2 pb-1 -mx-4 px-4 sm:-mx-6 sm:px-6 md:-mx-12 md:px-12 border-b border-slate-900/80 mb-6 shadow-2xl transition-all">
-        {/* NAV-BAR TABS (Moved to top of sticky section to establish hierarchy) */}
         <nav className="flex items-center gap-1 overflow-x-auto whitespace-nowrap scrollbar-none mb-4">
           <button
             onClick={() => setActiveTab("feed")}
@@ -471,7 +564,6 @@ export default function PublicDashboard() {
           </button>
         </nav>
 
-        {/* 1. MAIN FEED FILTER DECK */}
         {activeTab !== "ai-monitor" && (
           <section className="mb-2 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 shadow-md transition-all">
             <div className="relative w-full lg:max-w-md">
@@ -490,7 +582,11 @@ export default function PublicDashboard() {
 
                 <button
                   onClick={handleVoiceSearch}
-                  className={`transition-colors text-lg ${isListening ? "text-rose-400 animate-pulse" : "text-slate-400 hover:text-emerald-400"}`}
+                  className={`transition-colors text-lg ${
+                    isListening
+                      ? "text-rose-400 animate-pulse"
+                      : "text-slate-400 hover:text-emerald-400"
+                  }`}
                   aria-label="Search by voice"
                 >
                   {isListening ? "🎙️" : "🎤"}
@@ -534,7 +630,6 @@ export default function PublicDashboard() {
           </section>
         )}
 
-        {/* 2. AI MONITOR SPECIFIC HEADER DECK */}
         {activeTab === "ai-monitor" && (
           <section className="mb-2 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between bg-slate-900/80 p-3 rounded-xl border border-slate-800/80 shadow-md transition-all">
             <div>
@@ -559,32 +654,28 @@ export default function PublicDashboard() {
                   🔍
                 </span>
               </div>
-              <div className="hidden sm:block whitespace-nowrap rounded border border-slate-800 bg-slate-950/50 px-3 py-2 text-[10px] font-bold text-slate-400">
-                System: Active 2026 Tracker
-              </div>
             </div>
           </section>
         )}
       </div>
 
-      {/* STATE-PERSISTENT CONTAINER SECTORS */}
       <main className="w-full">
         {/* FEED SECTOR */}
         <div className={activeTab === "feed" ? "block" : "hidden"}>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredProfiles.map((leader) => (
+            {filteredProfiles.map((leader, idx) => (
               <div
-                key={leader.id}
+                key={leader.id || idx}
                 onClick={() => handleOpenScorecard(leader)}
                 className="flex flex-col justify-between rounded-xl border border-slate-800 bg-slate-900/40 p-5 transition-all hover:border-emerald-500/40 hover:bg-slate-900/80 cursor-pointer group shadow-sm w-full"
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      {leader.seat_layer}
+                      {leader.seat_layer || "N/A"}
                     </span>
                     <span className="text-[11px] font-medium text-slate-600 group-hover:text-slate-400 transition">
-                      #{leader.id.split("-").pop()}
+                      #{leader.id ? leader.id.split("-").pop() : idx}
                     </span>
                   </div>
 
@@ -644,7 +735,6 @@ export default function PublicDashboard() {
             ))}
           </div>
 
-          {/* NEXT BATCH PAGINATION CONTROL */}
           {hasMore && (
             <div className="mt-8 flex justify-center w-full">
               <button
@@ -665,7 +755,7 @@ export default function PublicDashboard() {
           )}
         </div>
 
-        {/* PROGRESS SECTOR - Lazy mounted on first click, then persistent */}
+        {/* AI MONITOR SECTOR */}
         {hasVisitedAiMonitor && (
           <div className={activeTab === "ai-monitor" ? "block" : "hidden"}>
             <AIMonitorSector searchQuery={aiSearchQuery} />
@@ -681,14 +771,20 @@ export default function PublicDashboard() {
               provided their verified manifesto documents for evaluation.
             </div>
 
-            {filteredProfiles.some(
-              (p) => p.challengers && p.challengers.length > 0,
-            ) ? (
+            {loadingChallengers ? (
+              <div className="flex justify-center py-12">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-500 border-t-transparent"></div>
+              </div>
+            ) : filteredChallengers.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProfiles.flatMap((leader) =>
-                  leader.challengers.map((challenger) => (
+                {filteredChallengers.map((challenger, idx) => {
+                  const manifestoSnippet = getPillarText(
+                    challenger.manifesto_pillars,
+                  );
+
+                  return (
                     <div
-                      key={challenger.challenger_id}
+                      key={challenger.challenger_id || idx}
                       onClick={() =>
                         router.push(`/challengers/${challenger.challenger_id}`)
                       }
@@ -700,7 +796,7 @@ export default function PublicDashboard() {
                             Aspirant Track
                           </span>
                           <span className="text-xs font-semibold text-slate-400">
-                            {challenger.party_affiliation}
+                            {challenger.party_affiliation || "N/A"}
                           </span>
                         </div>
 
@@ -710,21 +806,21 @@ export default function PublicDashboard() {
                         <p className="text-xs text-slate-400 mt-0.5">
                           Contesting For:{" "}
                           <span className="text-emerald-400 font-medium">
-                            {leader.role} ({leader.county})
+                            {challenger.target_role || "N/A"} (
+                            {challenger.target_location_name || "N/A"})
                           </span>
                         </p>
 
-                        {challenger.manifesto_pillars &&
-                          challenger.manifesto_pillars.length > 0 && (
-                            <div className="mt-3 p-3 bg-slate-950 rounded-lg border border-slate-900/60 text-xs text-slate-300">
-                              <span className="text-[10px] font-bold text-slate-500 block uppercase tracking-wider mb-1">
-                                Manifesto Brief:
-                              </span>
-                              <p className="line-clamp-2 leading-relaxed">
-                                {challenger.manifesto_pillars[0]}
-                              </p>
-                            </div>
-                          )}
+                        {manifestoSnippet && (
+                          <div className="mt-3 p-3 bg-slate-950 rounded-lg border border-slate-900/60 text-xs text-slate-300">
+                            <span className="text-[10px] font-bold text-slate-500 block uppercase tracking-wider mb-1">
+                              Manifesto Brief:
+                            </span>
+                            <p className="line-clamp-2 leading-relaxed">
+                              {manifestoSnippet}
+                            </p>
+                          </div>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60 text-center">
@@ -733,7 +829,7 @@ export default function PublicDashboard() {
                             Feasibility Rate
                           </span>
                           <span className="block text-sm font-bold text-cyan-400 font-mono mt-0.5">
-                            {challenger.ai_feasibility_score}%
+                            {challenger.ai_feasibility_score ?? 0}%
                           </span>
                         </div>
                         <div>
@@ -741,24 +837,24 @@ export default function PublicDashboard() {
                             Traction Velocity
                           </span>
                           <span className="block text-sm font-bold text-slate-300 font-mono mt-0.5">
-                            +{challenger.public_traction_velocity}%
+                            +{challenger.public_traction_velocity ?? 0}%
                           </span>
                         </div>
                         <div className="col-span-2 mt-2">
-                          <span className="block w-full pointer-click rounded-lg bg-cyan-500/10 py-2 text-xs font-bold text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/20 hover:text-white transition-all duration-200">
+                          <span className="block w-full cursor-pointer rounded-lg bg-cyan-500/10 py-2 text-xs font-bold text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/20 hover:text-white transition-all duration-200">
                             Open Scorecard - Click to View
                           </span>
                         </div>
                       </div>
                     </div>
-                  )),
-                )}
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-16 bg-slate-900/10 border border-slate-900 border-dashed rounded-xl max-w-md mx-auto w-full px-4">
                 <p className="text-xs text-slate-500 leading-relaxed">
                   No upcoming alternative challengers have registered or
-                  uploaded their tracking files for these boundaries yet.
+                  uploaded their tracking files matching this criteria.
                 </p>
               </div>
             )}

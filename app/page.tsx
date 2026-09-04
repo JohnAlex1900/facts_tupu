@@ -8,7 +8,7 @@ export default function LandingPage() {
       <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 px-3 sm:px-4 lg:px-8 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-base sm:text-xl font-black tracking-tighter text-white">
-            FACTS <span className="text-emerald-500">TUPU.</span>
+            FACTS <span className="text-emerald-500">TUPU.COM</span>
           </span>
         </div>
 
@@ -38,7 +38,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight max-w-3xl">
-          FACTS TUPU.
+          FACTS TUPU.COM
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
             <br />
             Get To Know Your Candidate.
