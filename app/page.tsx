@@ -1,0 +1,214 @@
+import PartnershipMarquee from "@/components/PartnershipMarquee";
+import Link from "next/link";
+import Image from "next/image";
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
+      {/* GLOBAL NAVIGATION LAYER */}
+      <header className="border-b border-slate-900 bg-slate-950/90 backdrop-blur-md sticky top-0 z-50 px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
+          {/* Clean, High-Contrast Logo Badge */}
+          <div className="bg-white p-1.5 sm:p-2 rounded-xl border border-slate-700/60 shadow-lg shadow-black/40 group-hover:border-emerald-500/50 transition-all flex items-center justify-center shrink-0">
+            <Image
+              src="/icon.jpeg"
+              alt="Facts-Tupu Shield Emblem"
+              width={120}
+              height={120}
+              className="h-8 w-auto sm:h-10 object-contain"
+              priority
+            />
+          </div>
+
+          {/* Brand Title & Tagline */}
+          <div className="flex flex-col">
+            <span className="text-base sm:text-xl font-black tracking-tight text-white leading-none group-hover:text-emerald-400 transition-colors">
+              FACTS-TUPU<span className="text-emerald-400">.COM</span>
+            </span>
+            <span className="text-[10px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase mt-1">
+              Know Your Candidate
+            </span>
+          </div>
+        </Link>
+
+        {/* Navigation Links */}
+        <nav className="hidden md:flex items-center gap-6 text-xs font-bold tracking-wide uppercase text-slate-400">
+          <a href="#metrics" className="hover:text-white transition">
+            Platform Overview
+          </a>
+          <a href="#features" className="hover:text-white transition">
+            Features
+          </a>
+        </nav>
+
+        {/* CTA Button */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="rounded-lg bg-emerald-600 hover:bg-emerald-500 px-3.5 sm:px-4 py-2 text-xs font-bold text-white transition shadow-md shadow-emerald-950/50"
+          >
+            Launch Dashboard
+          </Link>
+        </div>
+      </header>
+
+      {/* HERO SECTION */}
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-4 max-w-4xl mx-auto pt-20 pb-16">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/20 px-3 py-1 text-[11px] font-bold text-emerald-400 uppercase tracking-widest mb-6">
+          ⚡ Public Leadership & Accountability Platform
+        </div>
+
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight max-w-3xl">
+          FACTS TUPU.COM
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+            <br />
+            Get To Know Your Candidate.
+          </span>
+        </h1>
+
+        <p className="text-lg lg:text-base text-slate-400 max-w-2xl font-normal leading-relaxed mb-10 px-2 sm:px-0">
+          Welcome to{" "}
+          <strong className="text-white font-medium">facts-tupu.com</strong>—a
+          clear, reliable data campaign platform tracking all levels of Kenyan
+          leadership. We provide factual, un-biased performance metrics,
+          tracking what our elected officials promise against what they actually
+          deliver. Accountability For{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+            Every Elected Seat.
+          </span>
+        </p>
+
+        {/* PRIMARY CALL TO ACTION GRID */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center mb-20">
+          <Link
+            href="/dashboard"
+            className="w-full sm:w-auto rounded-xl bg-emerald-600 hover:bg-emerald-500 px-8 py-3.5 text-sm font-extrabold text-white shadow-xl shadow-emerald-950/40 transition text-center"
+          >
+            Access Transparency/Campaign Dashboard
+          </Link>
+          <Link
+            href="/onboard"
+            className="w-full sm:w-auto rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-900 px-8 py-3.5 text-sm font-extrabold text-slate-300 transition text-center"
+          >
+            Register as a Challenger
+          </Link>
+        </div>
+
+        {/* LIVE PLATFORM METRICS */}
+        <section
+          id="metrics"
+          className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 border border-slate-900 bg-slate-950 p-4 rounded-2xl shadow-2xl mb-24 text-left"
+        >
+          <div className="p-4 border-r border-slate-900 last:border-0">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Tracked Leaders
+            </span>
+            <span className="text-2xl font-extrabold font-mono text-white mt-1 block">
+              2638 / 2638
+            </span>
+          </div>
+          <div className="p-4 md:border-r border-slate-900 last:border-0">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Data Updates / Day
+            </span>
+            <span className="text-2xl font-extrabold font-mono text-emerald-400 mt-1 block">
+              14,200+
+            </span>
+          </div>
+          <div className="p-4 border-r border-slate-900 last:border-0">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Audited Manifestos
+            </span>
+            <span className="text-2xl font-extrabold font-mono text-white mt-1 block">
+              1,840+
+            </span>
+          </div>
+          <div className="p-4 last:border-0">
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Information Accuracy
+            </span>
+            <span className="text-2xl font-extrabold font-mono text-teal-400 mt-1 block">
+              100% Verified
+            </span>
+          </div>
+        </section>
+
+        {/* FEATURE CAPABILITIES GRID */}
+        <section id="features" className="w-full text-left space-y-4">
+          <h2 className="text-xs font-black uppercase tracking-widest text-emerald-400 border-b border-slate-900 pb-2">
+            What You Can Explore Inside The Dashboard
+          </h2>
+
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pt-2">
+            {/* FEATURE 1 */}
+            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-4 sm:p-5 space-y-2">
+              <div className="h-8 w-8 rounded-lg bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 text-sm font-bold">
+                01
+              </div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                Representative Feed
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                A live updates feed gathering the recent decisions and official
+                project updates from sitting Governors, Senators, Women Reps,
+                MPs, and MCAs.
+              </p>
+            </div>
+
+            {/* FEATURE 2 */}
+            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-4 sm:p-5 space-y-2">
+              <div className="h-8 w-8 rounded-lg bg-teal-950 border border-teal-800 flex items-center justify-center text-teal-400 text-sm font-bold">
+                02
+              </div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                AI Performance Monitor
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                An easy-to-read view for everyday citizens to see how well
+                leaders are performing against their original campaign promises
+                and scorecards.
+              </p>
+            </div>
+
+            {/* FEATURE 3 */}
+            <div className="rounded-xl border border-slate-900 bg-slate-900/20 p-4 sm:p-5 space-y-2">
+              <div className="h-8 w-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 text-sm font-bold">
+                03
+              </div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                Challengers Hub
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                A clean space designed for users to view upcoming alternative
+                candidates, read their goals, and explore their verified
+                manifesto files.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <PartnershipMarquee />
+
+      {/* FOOTER */}
+      <footer className="border-t border-slate-900 bg-slate-950/40 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-center md:text-left text-[10px] font-mono text-slate-600 max-w-sm">
+            © {new Date().getFullYear()} facts tupu. Built to provide open
+            transparency and factual information on public leadership tracking
+            frameworks.
+          </p>
+
+          <nav className="flex items-center gap-6 text-xs font-bold tracking-wide uppercase text-slate-500">
+            <Link
+              href="/terms"
+              className="hover:text-emerald-400 transition-colors duration-200"
+            >
+              Terms & Conditions
+            </Link>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  );
+}
