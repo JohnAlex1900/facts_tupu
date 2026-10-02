@@ -105,34 +105,37 @@ export default function IndividualScorecard({
 
   // Lazy fetch trigger when the tab is activated
   useEffect(() => {
-  if (activeMetricTab === "hate" && !hateData && !hateLoading) {
-    const fetchHateSpeech = async () => {
-      setHateLoading(true);
-      try {
-        const res = await fetch(
-          `${API_BASE_URL}/api/v1/analytics/hate-speech?name=${encodeURIComponent(
-            leader.name,
-          )}&role=${encodeURIComponent(
-            leader.role,
-          )}&leader_id=${encodeURIComponent(leader.id)}`,
-          { headers: { "ngrok-skip-browser-warning": "true" } },
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setHateData(data);
-          if (typeof data.hate_speech_score === "number") {
-            setHateData({ ...data, hate_speech_score: data.hate_speech_score });
+    if (activeMetricTab === "hate" && !hateData && !hateLoading) {
+      const fetchHateSpeech = async () => {
+        setHateLoading(true);
+        try {
+          const res = await fetch(
+            `${API_BASE_URL}/api/v1/analytics/hate-speech?name=${encodeURIComponent(
+              leader.name,
+            )}&role=${encodeURIComponent(
+              leader.role,
+            )}&leader_id=${encodeURIComponent(leader.id)}`,
+            { headers: { "ngrok-skip-browser-warning": "true" } },
+          );
+          if (res.ok) {
+            const data = await res.json();
+            setHateData(data);
+            if (typeof data.hate_speech_score === "number") {
+              setHateData({
+                ...data,
+                hate_speech_score: data.hate_speech_score,
+              });
+            }
           }
+        } catch (err) {
+          console.error("Failed to load live hate speech data", err);
+        } finally {
+          setHateLoading(false);
         }
-      } catch (err) {
-        console.error("Failed to load live hate speech data", err);
-      } finally {
-        setHateLoading(false);
-      }
-    };
-    fetchHateSpeech();
-  }
-}, [activeMetricTab, leader, hateData, hateLoading]);
+      };
+      fetchHateSpeech();
+    }
+  }, [activeMetricTab, leader, hateData, hateLoading]);
 
   // Stop audio and cleanup when the user leaves the card
   useEffect(() => {
@@ -598,7 +601,8 @@ export default function IndividualScorecard({
                   </span>
                   <p className="text-sm sm:text-base text-slate-400 leading-relaxed italic">
                     Evaluates public rally remarks, media transcripts, and
-                    social broadcasts for divisive rhetoric or incitement.
+                    social broadcasts for divisive rhetoric or incitement by the
+                    candidate or against the candidate.
                   </p>
 
                   <div className="space-y-3 pt-2">
