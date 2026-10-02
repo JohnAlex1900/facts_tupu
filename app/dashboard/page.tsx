@@ -708,7 +708,7 @@ export default function PublicDashboard() {
                       {leader.seat_layer || "N/A"}
                     </span>
                     <span className="text-[11px] font-medium text-slate-600 group-hover:text-slate-400 transition">
-                      #{leader.id ? leader.id.split("-").pop() : idx}
+                      #{leader.seat_layer === "EXECUTIVE" ? "00" : idx + 1}
                     </span>
                   </div>
 
