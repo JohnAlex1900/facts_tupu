@@ -105,29 +105,34 @@ export default function IndividualScorecard({
 
   // Lazy fetch trigger when the tab is activated
   useEffect(() => {
-    if (activeMetricTab === "hate" && !hateData && !hateLoading) {
-      const fetchHateSpeech = async () => {
-        setHateLoading(true);
-        try {
-          const res = await fetch(
-            `${API_BASE_URL}/api/v1/analytics/hate-speech?name=${encodeURIComponent(
-              leader.name,
-            )}&role=${encodeURIComponent(leader.role)}`,
-            { headers: { "ngrok-skip-browser-warning": "true" } },
-          );
-          if (res.ok) {
-            const data = await res.json();
-            setHateData(data);
+  if (activeMetricTab === "hate" && !hateData && !hateLoading) {
+    const fetchHateSpeech = async () => {
+      setHateLoading(true);
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/api/v1/analytics/hate-speech?name=${encodeURIComponent(
+            leader.name,
+          )}&role=${encodeURIComponent(
+            leader.role,
+          )}&leader_id=${encodeURIComponent(leader.id)}`,
+          { headers: { "ngrok-skip-browser-warning": "true" } },
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setHateData(data);
+          if (typeof data.hate_speech_score === "number") {
+            setHateData({ ...data, hate_speech_score: data.hate_speech_score });
           }
-        } catch (err) {
-          console.error("Failed to load live hate speech data", err);
-        } finally {
-          setHateLoading(false);
         }
-      };
-      fetchHateSpeech();
-    }
-  }, [activeMetricTab, leader.name, leader.role, hateData, hateLoading]);
+      } catch (err) {
+        console.error("Failed to load live hate speech data", err);
+      } finally {
+        setHateLoading(false);
+      }
+    };
+    fetchHateSpeech();
+  }
+}, [activeMetricTab, leader, hateData, hateLoading]);
 
   // Stop audio and cleanup when the user leaves the card
   useEffect(() => {

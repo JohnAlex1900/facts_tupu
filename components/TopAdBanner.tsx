@@ -39,27 +39,27 @@ export default function TopAdBanner() {
       isPortrait: false, // <-- Change to false for landscape
     },
     {
-      id: "ad-1",
-      badge: "Sponsored",
-      title: "Supercharge Your AI Development",
+      id: "official-facts-tupu-ad",
+      badge: "Official Platform Ad",
+      title: "Know Your Candidate — 2027 General Elections",
       description:
-        "Build, deploy, and scale AI models faster with the ultimate SaaS AI Launchpad.",
-      ctaText: "Start Free Trial",
-      ctaLink: "#",
-      imageUrl:
-        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop",
+        "Question, ask, and scrutinize. Make informed decisions with verified candidate insights on Facts-Tupu.com.",
+      ctaText: "Explore Candidates",
+      ctaLink: "https://www.factstupu.com",
+      videoUrl: "/videos/video_ad_2.mp4", // <-- Update this path to your new landscape video
+      isPortrait: false, // <-- Change to false for landscape
     },
-    {
-      id: "ad-2",
-      badge: "Partner",
-      title: "Secure High-Yield Investments",
-      description:
-        "Discover secure and high-yield opportunities in emerging markets.",
-      ctaText: "Learn More",
-      ctaLink: "#",
-      imageUrl:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
-    },
+    // {
+    //   id: "ad-2",
+    //   badge: "Partner",
+    //   title: "Secure High-Yield Investments",
+    //   description:
+    //     "Discover secure and high-yield opportunities in emerging markets.",
+    //   ctaText: "Learn More",
+    //   ctaLink: "#",
+    //   imageUrl:
+    //     "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
+    // },
   ]);
 
   const [currentIndex, setCurrentIndex] = useState(0);

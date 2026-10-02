@@ -81,12 +81,14 @@ interface ChallengerWorkspaceSession {
 interface Profile {
   id: string;
   seat_layer: string;
+  location_type?: string;
   name: string;
   county: string;
   role: string;
   jaba_meter: number;
   impact_rating: number;
   party_affiliation: string;
+  party?: string;
   rvs: number;
   hate_speech_score?: number;
   challengers: Challenger[];
@@ -259,6 +261,8 @@ export default function PublicDashboard() {
           }
           return {
             ...profile,
+            party_affiliation:
+              profile.party_affiliation || profile.party || "Independent",
             challengers: Array.isArray(parsedChallengers)
               ? parsedChallengers
               : [],
@@ -317,8 +321,21 @@ export default function PublicDashboard() {
   // Safe Null-Checked Search Filters
   const filteredProfiles = (Array.isArray(profiles) ? profiles : []).filter(
     (p) => {
+      const layerUpper = (activeLayer || "").toUpperCase();
+      const pSeatLayerUpper = (p.seat_layer || "").toUpperCase();
+      const pLocationTypeUpper = (p.location_type || "").toUpperCase();
+
       const matchesLayer =
-        activeLayer === "ALL" || p.seat_layer === activeLayer;
+        layerUpper === "ALL" ||
+        pSeatLayerUpper === layerUpper ||
+        pLocationTypeUpper === layerUpper ||
+        (layerUpper === "CONSTITUENCY" &&
+          (pSeatLayerUpper === "PARLIAMENT" ||
+            pSeatLayerUpper === "CONSTITUENCY")) ||
+        (layerUpper === "WARD" &&
+          (pSeatLayerUpper === "COUNTY_ASSEMBLY" ||
+            pSeatLayerUpper === "WARD"));
+
       const searchLower = (searchQuery || "").toLowerCase();
 
       const nameMatches = (p.name || "").toLowerCase().includes(searchLower);
@@ -326,6 +343,9 @@ export default function PublicDashboard() {
         .toLowerCase()
         .includes(searchLower);
       const roleMatches = (p.role || "").toLowerCase().includes(searchLower);
+      const partyMatches = (p.party_affiliation || p.party || "")
+        .toLowerCase()
+        .includes(searchLower);
       const challengerMatches =
         Array.isArray(p.challengers) &&
         p.challengers.some((c) =>
@@ -334,7 +354,11 @@ export default function PublicDashboard() {
 
       return (
         matchesLayer &&
-        (nameMatches || countyMatches || roleMatches || challengerMatches)
+        (nameMatches ||
+          countyMatches ||
+          roleMatches ||
+          partyMatches ||
+          challengerMatches)
       );
     },
   );
