@@ -308,6 +308,13 @@ export default function PublicDashboard() {
     };
   }, [page, searchQuery, activeLayer]);
 
+  const handleUpdateLeader = (updatedLeader: Profile) => {
+    setSelectedLeader(updatedLeader);
+    setProfiles((prevProfiles) =>
+      prevProfiles.map((p) => (p.id === updatedLeader.id ? updatedLeader : p)),
+    );
+  };
+
   const handleOpenScorecard = (leader: Profile) => {
     registerLookup(leader.id);
     const lookupPermitted =
@@ -489,6 +496,7 @@ export default function PublicDashboard() {
               setCurrentView("DASHBOARD");
               setSelectedLeader(null);
             }}
+            onUpdateLeader={handleUpdateLeader} // Pass update function
           />
         </div>
       </div>

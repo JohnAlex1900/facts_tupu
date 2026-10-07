@@ -70,6 +70,7 @@ interface Profile {
 interface IndividualScorecardProps {
   leader: Profile;
   onBack: () => void;
+  onUpdateLeader?: (updatedLeader: Profile) => void; // Added callback
 }
 
 interface LiveHateData {
@@ -85,6 +86,7 @@ interface LiveHateData {
 export default function IndividualScorecard({
   leader,
   onBack,
+  onUpdateLeader,
 }: IndividualScorecardProps) {
   const [activeMetricTab, setActiveMetricTab] = useState<
     "talk" | "delivery" | "rubric" | "risk" | "hate"
@@ -105,37 +107,48 @@ export default function IndividualScorecard({
 
   // Lazy fetch trigger when the tab is activated
   useEffect(() => {
-    if (activeMetricTab === "hate" && !hateData && !hateLoading) {
-      const fetchHateSpeech = async () => {
-        setHateLoading(true);
-        try {
-          const res = await fetch(
-            `${API_BASE_URL}/api/v1/analytics/hate-speech?name=${encodeURIComponent(
-              leader.name,
-            )}&role=${encodeURIComponent(
-              leader.role,
-            )}&leader_id=${encodeURIComponent(leader.id)}`,
-            { headers: { "ngrok-skip-browser-warning": "true" } },
-          );
-          if (res.ok) {
-            const data = await res.json();
+    let isMounted = true;
+    const fetchHateSpeech = async () => {
+      setHateLoading(true);
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/api/v1/analytics/hate-speech?name=${encodeURIComponent(
+            leader.name,
+          )}&role=${encodeURIComponent(
+            leader.role,
+          )}&leader_id=${encodeURIComponent(leader.id)}`,
+          { headers: { "ngrok-skip-browser-warning": "true" } },
+        );
+        if (res.ok) {
+          const data: LiveHateData = await res.json();
+          if (isMounted) {
             setHateData(data);
-            if (typeof data.hate_speech_score === "number") {
-              setHateData({
-                ...data,
+
+            // Sync updated hate speech score with parent dashboard state
+            if (
+              typeof data.hate_speech_score === "number" &&
+              data.hate_speech_score !== leader.hate_speech_score
+            ) {
+              onUpdateLeader?.({
+                ...leader,
                 hate_speech_score: data.hate_speech_score,
               });
             }
           }
-        } catch (err) {
-          console.error("Failed to load live hate speech data", err);
-        } finally {
-          setHateLoading(false);
         }
-      };
-      fetchHateSpeech();
-    }
-  }, [activeMetricTab, leader, hateData, hateLoading]);
+      } catch (err) {
+        console.error("Failed to load live hate speech data", err);
+      } finally {
+        if (isMounted) setHateLoading(false);
+      }
+    };
+
+    fetchHateSpeech();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [leader.id, leader.name, leader.role]); // Runs on load
 
   // Stop audio and cleanup when the user leaves the card
   useEffect(() => {
@@ -409,9 +422,7 @@ export default function IndividualScorecard({
                   Hate Speech
                 </span>
                 <span className="block mt-1 font-mono text-xl sm:text-2xl font-black text-purple-400">
-                  {hateData
-                    ? hateData.hate_speech_score
-                    : (leader.hate_speech_score ?? 0)}
+                  {hateData?.hate_speech_score ?? leader.hate_speech_score ?? 0}
                   %
                 </span>
               </button>
