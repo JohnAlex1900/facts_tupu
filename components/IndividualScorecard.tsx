@@ -61,7 +61,7 @@ interface Profile {
   jaba_meter: number;
   impact_rating: number;
   rvs: number;
-  hate_speech_score?: number;
+  hate_speech_score?: number | null;
   challengers: Challenger[];
   ai_monitor_data?: AIDeepDiveMonitor;
   mandate_statement?: string;
@@ -74,13 +74,65 @@ interface IndividualScorecardProps {
 }
 
 interface LiveHateData {
-  hate_speech_score: number;
+  hate_speech_score: number | null;
   statements: {
     quote: string;
     context: string;
     severity_score: number;
+    score_contribution?: number | null;
+    direction?: "by_representative" | "against_representative" | "unclassified";
+    category?: string;
+    is_verbatim?: boolean;
+    source_url?: string;
+    published?: string | null;
   }[];
   verdict: string;
+  analysis_error?: string | null;
+}
+
+const liveHateRequests = new Map<string, Promise<LiveHateData>>();
+
+function fetchLiveHateSpeech(
+  leader: Pick<Profile, "id" | "name" | "role">,
+): Promise<LiveHateData> {
+  // Avoid duplicate Groq calls from concurrent mounts of the same scorecard.
+  const existingRequest = liveHateRequests.get(leader.id);
+  if (existingRequest) return existingRequest;
+
+  const params = new URLSearchParams({
+    name: leader.name,
+    role: leader.role,
+    leader_id: leader.id,
+  });
+  const request = fetch(
+    `${API_BASE_URL}/api/v1/analytics/hate-speech?${params.toString()}`,
+    { headers: { "ngrok-skip-browser-warning": "true" } },
+  ).then(async (res) => {
+    if (!res.ok) {
+      const responseDetail = (await res.text()).trim().slice(0, 300);
+      throw new Error(
+        `Hate-speech request failed (${res.status} ${res.statusText})${
+          responseDetail ? `: ${responseDetail}` : ""
+        }`,
+      );
+    }
+    return (await res.json()) as LiveHateData;
+  });
+
+  liveHateRequests.set(leader.id, request);
+  void request.then(
+    () => {
+      if (liveHateRequests.get(leader.id) === request) {
+        liveHateRequests.delete(leader.id);
+      }
+    },
+    () => {
+      if (liveHateRequests.get(leader.id) === request) {
+        liveHateRequests.delete(leader.id);
+      }
+    },
+  );
+  return request;
 }
 
 export default function IndividualScorecard({
@@ -104,40 +156,35 @@ export default function IndividualScorecard({
 
   const [hateData, setHateData] = useState<LiveHateData | null>(null);
   const [hateLoading, setHateLoading] = useState<boolean>(false);
+  const [hateError, setHateError] = useState<string | null>(null);
 
-  // Lazy fetch trigger when the tab is activated
+  // Analyze only the representative whose scorecard has just opened.
   useEffect(() => {
     let isMounted = true;
     const fetchHateSpeech = async () => {
       setHateLoading(true);
+      setHateData(null);
+      setHateError(null);
       try {
-        const res = await fetch(
-          `${API_BASE_URL}/api/v1/analytics/hate-speech?name=${encodeURIComponent(
-            leader.name,
-          )}&role=${encodeURIComponent(
-            leader.role,
-          )}&leader_id=${encodeURIComponent(leader.id)}`,
-          { headers: { "ngrok-skip-browser-warning": "true" } },
-        );
-        if (res.ok) {
-          const data: LiveHateData = await res.json();
-          if (isMounted) {
-            setHateData(data);
+        const data = await fetchLiveHateSpeech(leader);
+        if (isMounted) {
+          setHateData(data);
+          setHateError(data.analysis_error ?? null);
 
-            // Sync updated hate speech score with parent dashboard state
-            if (
-              typeof data.hate_speech_score === "number" &&
-              data.hate_speech_score !== leader.hate_speech_score
-            ) {
-              onUpdateLeader?.({
-                ...leader,
-                hate_speech_score: data.hate_speech_score,
-              });
-            }
+          if (data.hate_speech_score !== leader.hate_speech_score) {
+            onUpdateLeader?.({
+              ...leader,
+              hate_speech_score: data.hate_speech_score,
+            });
           }
         }
       } catch (err) {
         console.error("Failed to load live hate speech data", err);
+        if (isMounted) {
+          setHateError(
+            err instanceof Error ? err.message : "Unknown request error",
+          );
+        }
       } finally {
         if (isMounted) setHateLoading(false);
       }
@@ -148,7 +195,7 @@ export default function IndividualScorecard({
     return () => {
       isMounted = false;
     };
-  }, [leader.id, leader.name, leader.role]); // Runs on load
+  }, [leader.id, leader.name, leader.role]);
 
   // Stop audio and cleanup when the user leaves the card
   useEffect(() => {
@@ -202,6 +249,7 @@ export default function IndividualScorecard({
     };
   }, [leader.id]);
 
+  const liveHateScore = hateData?.hate_speech_score ?? null;
   const aiMonitor: AIDeepDiveMonitor = leader.ai_monitor_data || {
     action_plan_practicality: 88,
     unrealistic_promises_risk: 30,
@@ -227,9 +275,9 @@ export default function IndividualScorecard({
       "Audit disclosures flag pending transparency documentation.",
     ],
     hate_speech_justification:
-      (leader.hate_speech_score ?? 0) > 0
+      liveHateScore != null && liveHateScore > 0
         ? [
-            `Automated linguistic analysis flagged an elevated polarization score of ${leader.hate_speech_score}%.`,
+            `Automated linguistic analysis flagged an elevated polarization score of ${liveHateScore}%.`,
           ]
         : [],
   };
@@ -268,7 +316,10 @@ export default function IndividualScorecard({
       text += `Risk and audit justifications include: ${aiMonitor.risk_level_justification.join(" ")} `;
     }
 
-    text += `Hate speech and divisive rhetoric index is at ${leader?.hate_speech_score ?? "0"} percent. `;
+    text +=
+      liveHateScore == null
+        ? "Hate speech and divisive rhetoric index has not been assessed. "
+        : `Hate speech and divisive rhetoric index is at ${liveHateScore} percent. `;
     if (
       aiMonitor.hate_speech_justification &&
       aiMonitor.hate_speech_justification.length > 0
@@ -422,8 +473,11 @@ export default function IndividualScorecard({
                   Hate Speech
                 </span>
                 <span className="block mt-1 font-mono text-xl sm:text-2xl font-black text-purple-400">
-                  {hateData?.hate_speech_score ?? leader.hate_speech_score ?? 0}
-                  %
+                  {hateLoading
+                    ? "..."
+                    : liveHateScore == null
+                      ? "N/A"
+                      : `${liveHateScore}%`}
                 </span>
               </button>
             </div>
@@ -611,9 +665,10 @@ export default function IndividualScorecard({
                     📢 Hate Speech & Polarization Index
                   </span>
                   <p className="text-sm sm:text-base text-slate-400 leading-relaxed italic">
-                    Evaluates public rally remarks, media transcripts, and
-                    social broadcasts for divisive rhetoric or incitement by the
-                    candidate or against the candidate.
+                    Reviews sourced statements by the representative and
+                    criticism or allegations made against them. Only verified
+                    harmful speech by the representative contributes to this
+                    score; unverified results are shown as unavailable, not 0%.
                   </p>
 
                   <div className="space-y-3 pt-2">
@@ -635,27 +690,63 @@ export default function IndividualScorecard({
                             ☣️
                           </span>
                           <div className="space-y-2 w-full">
-                            <p className="leading-relaxed font-bold">
-                              &quot;{stmt.quote}&quot;
-                            </p>
+                            <span className="inline-flex rounded-md border border-purple-900/60 bg-purple-950/40 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-purple-200">
+                              {stmt.direction === "against_representative"
+                                ? "Reported about representative"
+                                : stmt.direction === "by_representative"
+                                  ? "Reported statement by representative"
+                                  : "Reported statement"}
+                              {stmt.category ? ` · ${stmt.category.replaceAll("_", " ")}` : ""}
+                            </span>
+                            {stmt.is_verbatim ? (
+                              <p className="leading-relaxed font-bold">
+                                &quot;{stmt.quote}&quot;
+                              </p>
+                            ) : (
+                              <p className="leading-relaxed font-bold">
+                                <span className="text-slate-400">Reported summary: </span>
+                                {stmt.quote}
+                              </p>
+                            )}
                             <p className="text-sm text-slate-400 italic">
                               {stmt.context}
                             </p>
-                            <div className="flex justify-between items-center mt-3 border-t border-slate-800/60 pt-2.5">
-                              <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">
-                                Severity Metric
-                              </span>
-                              <span className="text-xs font-mono font-bold text-purple-300 bg-purple-950/50 border border-purple-900/50 px-2.5 py-1 rounded-md">
-                                {stmt.severity_score}%
-                              </span>
-                            </div>
+                            {stmt.source_url &&
+                              /^https?:\/\//i.test(stmt.source_url) && (
+                                <a
+                                  className="text-xs text-cyan-300 underline underline-offset-2 break-all"
+                                  href={stmt.source_url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  Source{stmt.published ? ` · ${stmt.published}` : ""}
+                                </a>
+                              )}
+                            {stmt.score_contribution != null ? (
+                              <div className="flex justify-between items-center mt-3 border-t border-slate-800/60 pt-2.5">
+                                <span className="text-xs uppercase font-bold text-slate-500 tracking-wider">
+                                  Included in hate-speech score
+                                </span>
+                                <span className="text-xs font-mono font-bold text-purple-300 bg-purple-950/50 border border-purple-900/50 px-2.5 py-1 rounded-md">
+                                  {stmt.score_contribution}%
+                                </span>
+                              </div>
+                            ) : (
+                              <p className="mt-3 border-t border-slate-800/60 pt-2.5 text-xs text-slate-500">
+                                Context only — not included in the hate-speech score.
+                              </p>
+                            )}
                           </div>
                         </div>
                       ))
                     ) : (
                       <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 text-sm text-slate-400 italic">
-                        {hateData?.verdict ||
-                          "No significant hate speech or inciting rhetoric flagged in recent public recordings."}
+                        {hateError
+                          ? `Analysis unavailable: ${hateError}`
+                          : hateData?.analysis_error
+                            ? `Analysis unavailable: ${hateData.analysis_error}`
+                            : hateData?.verdict ||
+                              "No significant hate speech or inciting rhetoric flagged in recent public recordings."}
                       </div>
                     )}
                   </div>

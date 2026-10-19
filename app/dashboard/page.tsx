@@ -90,7 +90,7 @@ interface Profile {
   party_affiliation: string;
   party?: string;
   rvs: number;
-  hate_speech_score?: number;
+  hate_speech_score?: number | null;
   challengers: Challenger[];
   ai_monitor_data?: AIDeepDiveMonitor;
 }
@@ -772,7 +772,9 @@ export default function PublicDashboard() {
                         Hate Speech
                       </div>
                       <div className="mt-1 font-mono font-bold text-purple-400 text-xs sm:text-sm">
-                        {leader.hate_speech_score ?? 0}%
+                        {leader.hate_speech_score == null
+                          ? "N/A"
+                          : `${leader.hate_speech_score}%`}
                       </div>
                     </div>
                   </div>
