@@ -1,8 +1,37 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import PartnershipMarquee from "@/components/PartnershipMarquee";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function LandingPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial engine insight gathering on first visit
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-950 text-slate-50 p-6 selection:bg-emerald-500 selection:text-slate-950">
+        <div className="flex flex-col items-center space-y-6 text-center max-w-lg">
+          <div className="relative flex items-center justify-center">
+            <div className="h-12 w-12 rounded-full border-2 border-emerald-500/20 border-t-emerald-500 animate-spin" />
+          </div>
+          <p className="text-base sm:text-lg font-medium text-slate-300 animate-pulse tracking-wide">
+            The engine is gathering your insights... This will just take a
+            moment......
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-slate-950">
       {/* GLOBAL NAVIGATION LAYER */}
