@@ -168,7 +168,6 @@ export default function PublicDashboard() {
   const [hasVisitedChallengers, setHasVisitedChallengers] = useState(false);
 
   // Fetch Challengers Tab Data
-  // Fetch Challengers Tab Data
   useEffect(() => {
     let isMounted = true;
     if (activeTab === "challengers" && !hasVisitedChallengers) {
@@ -198,7 +197,6 @@ export default function PublicDashboard() {
     return () => {
       isMounted = false;
     };
-    // FIX: Removed hasVisitedChallengers from this array
   }, [activeTab]);
 
   useEffect(() => {
@@ -443,10 +441,19 @@ export default function PublicDashboard() {
     return "";
   };
 
+  // UPDATED INITIAL DASHBOARD LOADING ANIMATION WITH CUSTOM TEXT
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-950 text-slate-50 p-6 selection:bg-emerald-500 selection:text-slate-950">
+        <div className="flex flex-col items-center space-y-6 text-center max-w-lg">
+          <div className="relative flex items-center justify-center">
+            <div className="h-12 w-12 rounded-full border-2 border-emerald-500/20 border-t-emerald-500 animate-spin" />
+          </div>
+          <p className="text-base sm:text-lg font-medium text-slate-300 animate-pulse tracking-wide">
+            The engine is gathering your insights... This will just take a
+            moment......
+          </p>
+        </div>
       </div>
     );
   }
@@ -496,7 +503,7 @@ export default function PublicDashboard() {
               setCurrentView("DASHBOARD");
               setSelectedLeader(null);
             }}
-            onUpdateLeader={handleUpdateLeader} // Pass update function
+            onUpdateLeader={handleUpdateLeader}
           />
         </div>
       </div>
