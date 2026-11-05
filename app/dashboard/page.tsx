@@ -449,8 +449,8 @@ export default function PublicDashboard() {
           <div className="relative flex items-center justify-center">
             <div className="h-12 w-12 rounded-full border-2 border-emerald-500/20 border-t-emerald-500 animate-spin" />
           </div>
-          <p className="text-base sm:text-lg font-medium text-slate-300 animate-pulse tracking-wide">
-            The engine is gathering your insights... This will just take a
+          <p className="text-base sm:text-lg font-medium text-teal-400 animate-pulse tracking-wide">
+            The AI Engine is compiling the score cards... This will just take a
             moment......
           </p>
         </div>
